@@ -306,13 +306,7 @@ input, select, textarea { font-family: inherit; }
    VEHICLE GRID / CARDS
    ================================================================ */
 .vehicle-grid { display: flex; flex-direction: column; gap: 10px; }
-
-.vehicle-card {
-  display: flex; align-items: center; gap: 16px;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 16px 20px;
-  box-shadow: var(--shadow-sm); transition: all 0.2s;
-}
+.vehicle-card { display: flex; align-items: center; gap: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; box-shadow: var(--shadow-sm); transition: all 0.2s;}
 .vehicle-card:hover { box-shadow: var(--shadow-md); transform: translateX(3px); border-color: var(--orange); }
 .vehicle-icon { width: 52px; height: 52px; border-radius: 12px; background: var(--bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .vehicle-info { flex: 1; }
@@ -320,6 +314,10 @@ input, select, textarea { font-family: inherit; }
 .vehicle-modelo { font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px; }
 .vehicle-badge { display: inline-block; margin-top: 6px; padding: 2px 10px; border-radius: 99px; font-size: 0.75rem; font-weight: 600; background: var(--orange-dim); color: var(--orange); }
 .vehicle-actions { display: flex; gap: 4px; }
+
+.clickable-card { cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;}
+.clickable-card:hover {transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--accent); /* Cor de destaque ao passar o mouse */}
+.vehicle-actions {position: relative; z-index: 2;}
 
 /* ================================================================
    VEHICLE DETAIL

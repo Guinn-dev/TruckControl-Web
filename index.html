@@ -686,39 +686,48 @@
   }
 
   function renderFrota() {
-    const query = $("frota-search").value.toLowerCase();
-    const list = currentTab === "caminhoes" ? frotas : carretas;
-    const filtered = list.filter(v =>
-      (v.placa || "").toLowerCase().includes(query) ||
-      (v.modelo || "").toLowerCase().includes(query)
-    );
-    const container = $("frota-list");
-    if (!filtered.length) { container.innerHTML = '<div class="empty-state">Nenhum veículo encontrado.</div>'; return; }
-    container.innerHTML = filtered.map(v => `
-      <div class="vehicle-card" data-id="${v.id}" data-type="${currentTab}">
-        <div class="vehicle-icon">
-          ${currentTab === "caminhoes" ?
-            `<svg width="32" height="32" fill="none" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2" stroke="#FF6B00" stroke-width="2"/><path d="M16 8h5l3 3v4h-8V8Z" stroke="#FF6B00" stroke-width="2"/><circle cx="5.5" cy="18.5" r="2.5" stroke="#FF6B00" stroke-width="2"/><circle cx="18.5" cy="18.5" r="2.5" stroke="#FF6B00" stroke-width="2"/></svg>` :
-            `<svg width="32" height="32" fill="none" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="12" rx="2" stroke="#3B82F6" stroke-width="2"/><circle cx="7" cy="19" r="2" stroke="#3B82F6" stroke-width="2"/><circle cx="17" cy="19" r="2" stroke="#3B82F6" stroke-width="2"/></svg>`
-          }
-        </div>
-        <div class="vehicle-info">
-          <div class="vehicle-placa">${v.placa || "—"}</div>
-          <div class="vehicle-modelo">${v.modelo || "—"} · ${v.ano_modelo || v.ano_fabricacao || "—"}</div>
-          ${v.filial ? `<div class="vehicle-badge">${v.filial}</div>` : ""}
-        </div>
-        <div class="vehicle-actions">
-          ${currentTab === "caminhoes" ? `<button class="btn-icon btn-eye" data-placa="${v.placa}" title="Ver detalhes">👁</button>` : ""}
-          ${currentUserData?.tipo === "admin" ? `<button class="btn-icon btn-edit" data-docid="${v.id}" data-type="${currentTab}" title="Editar">✏️</button>` : ""}
-        </div>
-      </div>`).join("");
+      const query = $("frota-search").value.toLowerCase();
+      const list = currentTab === "caminhoes" ? frotas : carretas;
+      const filtered = list.filter(v =>
+        (v.placa || "").toLowerCase().includes(query) ||
+        (v.modelo || "").toLowerCase().includes(query)
+      );
+      const container = $("frota-list");
+      if (!filtered.length) { container.innerHTML = '<div class="empty-state">Nenhum veículo encontrado.</div>'; return; }
+    
+      container.innerHTML = filtered.map(v => `
+        <div class="vehicle-card clickable-card" data-placa="${v.placa}" title="Clique para ver detalhes">
+          <div class="vehicle-icon">
+            ${currentTab === "caminhoes" ?
+              `<svg width="32" height="32" fill="none" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2" stroke="#FF6B00" stroke-width="2"/><path d="M16 8h5l3 3v4h-8V8Z" stroke="#FF6B00" stroke-width="2"/><circle cx="5.5" cy="18.5" r="2.5" stroke="#FF6B00" stroke-width="2"/><circle cx="18.5" cy="18.5" r="2.5" stroke="#FF6B00" stroke-width="2"/></svg>` :
+              `<svg width="32" height="32" fill="none" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="12" rx="2" stroke="#3B82F6" stroke-width="2"/><circle cx="7" cy="19" r="2" stroke="#3B82F6" stroke-width="2"/><circle cx="17" cy="19" r="2" stroke="#3B82F6" stroke-width="2"/></svg>`
+            }
+          </div>
+          <div class="vehicle-info">
+            <div class="vehicle-placa">${v.placa || "—"}</div>
+            <div class="vehicle-modelo">${v.modelo || "—"} · ${v.ano_modelo || v.ano_fabricacao || "—"}</div>
+            ${v.filial ? `<div class="vehicle-badge">${v.filial}</div>` : ""}
+          </div>
+          <div class="vehicle-actions">
+            ${currentUserData?.tipo === "admin" ? `<button class="btn-icon btn-edit" data-docid="${v.id}" data-type="${currentTab}" title="Editar">✏️</button>` : ""}
+          </div>
+        </div>`).join("");
 
-    container.querySelectorAll(".btn-eye").forEach(btn => {
-      btn.addEventListener("click", () => navigate("detail", btn.dataset.placa));
-    });
-    container.querySelectorAll(".btn-edit").forEach(btn => {
-      btn.addEventListener("click", () => openModal(btn.dataset.type === "caminhoes" ? "frota" : "carreta", btn.dataset.docid));
-    });
+      // Atribui a função de navegação para detalhes ao corpo do card
+      container.querySelectorAll(".clickable-card").forEach(card => {
+        card.addEventListener("click", (e) => {
+          // Impede que o clique no botão de editar dispare a navegação para detalhes
+          if (e.target.closest('.btn-edit')) return;
+          navigate("detail", card.dataset.placa);
+        });
+      });
+
+      container.querySelectorAll(".btn-edit").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation(); // Garante que apenas o modal de edição abra
+          openModal(btn.dataset.type === "caminhoes" ? "frota" : "carreta", btn.dataset.docid);
+        });
+      });
   }
 
   // ─── VEHICLE DETAIL ───────────────────────────────────────────────────────
