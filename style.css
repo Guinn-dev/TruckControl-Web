@@ -219,24 +219,26 @@ input, select, textarea { font-family: inherit; }
 /* ================================================================
    KPI CARDS
    ================================================================ */
-.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+/* Container dos Cards */
+.kpi-grid {display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 10px; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;}
 
-.kpi-card {
-  border-radius: var(--radius);
-  border-left: 4px solid var(--primary); /* Destaque lateral em vez de fundo colorido */
-  box-shadow: none;
-}
-.kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-.kpi-icon {
-  width: 48px; height: 48px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.kpi-orange .kpi-icon { background: var(--orange-dim); color: var(--orange); }
-.kpi-blue .kpi-icon { background: var(--blue-dim); color: var(--blue); }
-.kpi-yellow .kpi-icon { background: var(--yellow-dim); color: var(--yellow); }
-.kpi-green .kpi-icon { background: var(--green-dim); color: var(--green); }
-.kpi-value { font-family: "Syne", sans-serif; font-size: 1.75rem; font-weight: 800; line-height: 1; }
-.kpi-label { font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; font-weight: 500; }
+/* Estilo Base do Card */
+.kpi-card {background: #fff; border-radius: 12px; padding: 20px; display: flex; align-items: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); transition: transform 0.2s, box-shadow 0.2s; border: 1px solid #f0f0f0;}
+.kpi-card:hover {transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);}
+
+/* Ícones com fundo suave */
+.kpi-icon {width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 15px;}
+
+/* Cores harmônicas para os ícones e bordas laterais */
+.kpi-orange .kpi-icon { background: #fff3e0; color: #ef6c00; }
+.kpi-blue   .kpi-icon { background: #e3f2fd; color: #1565c0; }
+.kpi-yellow .kpi-icon { background: #fffde7; color: #fbc02d; }
+.kpi-green  .kpi-icon { background: #e8f5e9; color: #2e7d32; }
+
+/* Tipografia */
+.kpi-info {display: flex; flex-direction: column;}
+.kpi-value {font-size: 1.5rem; font-weight: 700; color: #333; line-height: 1; margin-bottom: 4px;}
+.kpi-label {font-size: 0.85rem; font-weight: 500; color: #777; text-transform: uppercase; letter-spacing: 0.5px;}
 
 /* ================================================================
    CHARTS
@@ -349,16 +351,16 @@ input, select, textarea { font-family: inherit; }
 /* ================================================================
    MAINTENANCE
    ================================================================ */
-.manut-summary {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
-  margin-bottom: 20px;
-}
+.manut-summary {display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;}
 .manut-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; text-align: center; box-shadow: var(--shadow-sm); }
-.ms-num { font-family: "Syne", sans-serif; font-size: 2rem; font-weight: 800; }
+.ms-num { font-family: 'Inter', sans-serif; font-size: 2.2rem;  font-weight: 700; }
 .ms-label { font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; font-weight: 500; }
 .stat-orange .ms-num { color: var(--orange); }
 .stat-red .ms-num { color: var(--red); }
 .stat-green .ms-num { color: var(--green); }
+#ms-agendadas { color: var(--orange, #f6993f); }
+#ms-atrasadas { color: var(--red, #e3342f); }
+#ms-concluidas { color: var(--green, #38c172); }
 
 .manut-grid { display: flex; flex-direction: column; gap: 10px; }
 .manut-card {
@@ -375,6 +377,15 @@ input, select, textarea { font-family: inherit; }
 .manut-meta { display: flex; gap: 12px; margin-top: 6px; font-size: 0.8rem; color: var(--text-muted); }
 .manut-status-badge { padding: 4px 12px; border-radius: 99px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
 
+.page-header {display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;}
+.header-actions {display: flex; gap: 10px;}
+
+.btn-primary {background: #1a202c; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;}
+/* Botão Editar (Borda cinza/discreto) */
+.btn-secondary {background: white; color: #4a5568; border: 1px solid #e2e8f0; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem;}
+
+.btn-primary:hover { background: #2d3748; }
+.btn-secondary:hover { background: #f7fafc; }
 /* ================================================================
    PROFILE
    ================================================================ */

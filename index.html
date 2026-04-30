@@ -49,9 +49,9 @@
             </svg>
           </div>
           <h1 class="brand-name">TruckControl</h1>
-          <p class="brand-tagline">Gestão inteligente<br/>da sua frota</p>
+          <p class="brand-tagline">Gestão inteligente da sua frota</p>
           <div class="brand-stats">
-            <div class="brand-stat"><span class="stat-num">99.9%</span><span class="stat-label">Uptime</span></div>
+            <div class="brand-stat"><span class="stat-num">100%</span><span class="stat-label">Uptime</span></div>
             <div class="brand-stat"><span class="stat-num">Real-time</span><span class="stat-label">Firebase sync</span></div>
             <div class="brand-stat"><span class="stat-num">360°</span><span class="stat-label">Visibilidade</span></div>
           </div>
@@ -59,11 +59,11 @@
       </div>
       <div class="login-form-area">
         <div class="login-card">
-          <h2>Bem-vindo de volta</h2>
-          <p class="login-subtitle">Acesse o painel de controle da sua frota</p>
+          <h2>Inicie a sessão</h2>
+          <p class="login-subtitle">Acesse o painel de controle de sua frota</p>
           <div id="login-error" class="alert alert-error hidden"></div>
           <div class="form-group">
-            <label>E-mail</label>
+            <label>Usuário</label>
             <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email" />
           </div>
           <div class="form-group">
@@ -119,7 +119,7 @@
       <div class="sidebar-bottom">
         <a href="#" class="nav-item" data-page="profile">
           <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/></svg>
-          <span>Perfil</span>
+          <span>Perfil do usuário</span>
         </a>
         <a href="#" class="nav-item nav-logout" id="btn-logout">
           <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="16,17 21,12 16,7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -147,7 +147,7 @@
         <div class="page-header">
           <div>
             <h1 class="page-title">Dashboard</h1>
-            <p class="page-subtitle" id="home-greeting">Bem-vindo de volta!</p>
+            <p class="page-subtitle">Painel principal</p>
           </div>
           <div class="header-date" id="home-date"></div>
         </div>
@@ -279,12 +279,31 @@
             <h1 class="page-title">Manutenção</h1>
             <p class="page-subtitle">Histórico e agendamentos</p>
           </div>
+          <div class="header-actions">
+            <button class="btn-secondary" onclick="abrirModalManutencao('editar')">
+              <i class="fas fa-edit"></i> EDITAR
+            </button>
+            <button class="btn-primary" onclick="abrirModalManutencao('adicionar')">
+              <i class="fas fa-plus"></i> + Adicionar
+            </button>
+          </div>
         </div>
+
         <div class="manut-summary" id="manut-summary">
-          <div class="manut-stat stat-orange"><div class="ms-num" id="ms-agendadas">—</div><div class="ms-label">Agendadas</div></div>
-          <div class="manut-stat stat-red"><div class="ms-num" id="ms-atrasadas">—</div><div class="ms-label">Atrasadas</div></div>
-          <div class="manut-stat stat-green"><div class="ms-num" id="ms-concluidas">—</div><div class="ms-label">Concluídas</div></div>
+          <div class="manut-stat stat-orange">
+            <div class="ms-num" id="ms-agendadas">—</div>
+            <div class="ms-label">Agendadas</div>
+          </div>
+          <div class="manut-stat stat-red">
+            <div class="ms-num" id="ms-atrasadas">—</div>
+            <div class="ms-label">Atrasadas</div>
+          </div>
+          <div class="manut-stat stat-green">
+            <div class="ms-num" id="ms-concluidas">—</div>
+            <div class="ms-label">Concluídas</div>
+          </div>
         </div>
+
         <div id="manut-list" class="manut-grid">
           <div class="empty-state">Carregando...</div>
         </div>
@@ -476,13 +495,7 @@
   function initApp() {
     hide($("page-login"));
     show($("main-layout"));
-
-    // User greeting
-    const nome = currentUserData?.nome || "Usuário";
-    $("home-greeting").textContent = `Olá, ${nome}! 👋`;
-    $("topbar-avatar").textContent = nome[0]?.toUpperCase() || "U";
-    $("profile-avatar-big").textContent = nome[0]?.toUpperCase() || "U";
-
+    
     // Show admin nav if admin
     if (currentUserData?.tipo === "admin") {
       document.querySelectorAll(".nav-admin").forEach(el => show(el));
@@ -829,6 +842,54 @@
           <div class="manut-status-badge" style="background:${color}22; color:${color}">${m.status || "—"}</div>
         </div>`;
     }).join("");
+  }
+
+// Simulação de banco de dados local
+  let manutencoes = []; 
+
+  function abrirModalManutencao(modo) {
+      if (modo === 'adicionar') {
+          const veiculo = prompt("Digite o ID do Veículo (ex: FROTA-1011):");
+          const servico = prompt("Descrição do Serviço:");
+          const data = new Date().toLocaleDateString('pt-BR');
+        
+          if (veiculo && servico) {
+              const novaManut = {
+                  id: Date.now(),
+                  veiculo: veiculo,
+                  servico: servico,
+                  data: data,
+                  status: 'AGENDADA'
+              };
+              manutencoes.push(novaManut);
+              renderizarListaManutencao();
+              atualizarResumo();
+          }
+      } else {
+          alert("Selecione um card abaixo para editar ou funcionalidade de edição em lote.");
+      }
+  }
+
+  function renderizarListaManutencao() {
+      const lista = document.getElementById('manut-list');
+      if (manutencoes.length === 0) return;
+
+      lista.innerHTML = manutencoes.map(m => `
+          <div class="manut-card" onclick="editarRegistro(${m.id})">
+              <div class="manut-icon" style="background: #fff5f5;"><i class="fas fa-wrench"></i></div>
+              <div class="manut-info">
+                  <div class="manut-veiculo">${m.veiculo}</div>
+                  <div class="manut-servico">${m.servico}</div>
+                  <div class="manut-meta"><span>📅 ${m.data}</span></div>
+              </div>
+              <span class="manut-status-badge">${m.status}</span>
+          </div>
+      `).join('');
+  }
+
+  function atualizarResumo() {
+      // Atualiza os números nos cards coloridos lá do topo
+      document.getElementById('ms-agendadas').innerText = manutencoes.length;
   }
 
   // ─── PROFILE ──────────────────────────────────────────────────────────────
