@@ -1,7 +1,7 @@
 # TruckControl Web 🚛
 
-Versão web completa do aplicativo mobile TruckControl, desenvolvido em Flutter.  
-Reescrito do zero em **HTML + CSS + JavaScript puro**, com integração Firebase nativa.
+Versão web completa do aplicativo TruckControl.  
+Adaptado em **HTML + CSS + JavaScript puro**, com integração Firebase nativa.
 
 ## Stack
 
