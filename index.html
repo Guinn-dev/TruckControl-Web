@@ -261,11 +261,21 @@
 
       <!-- ========== VEHICLE DETAIL ========== -->
       <div id="page-detail" class="inner-page hidden">
-        <div class="page-header">
+        <div class="page-header detail-page-header">
           <button class="btn-back" id="btn-back-detail">
             <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             Voltar
           </button>
+          <div class="detail-header-actions hidden btn-admin-only" id="detail-actions">
+            <button class="btn-detail-edit" id="btn-detail-edit">
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Editar
+            </button>
+            <button class="btn-detail-delete" id="btn-detail-delete">
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Excluir
+            </button>
+          </div>
         </div>
         <div id="detail-content">
           <div class="empty-state">Carregando...</div>
@@ -276,18 +286,15 @@
       <div id="page-maintenance" class="inner-page hidden">
         <div class="page-header">
           <div>
-            <h1 class="page-title">Manutenção</h1>
-            <p class="page-subtitle">Histórico e agendamentos</p>
-          </div>
-          <div class="header-actions">
-            <button class="btn-secondary" onclick="abrirModalManutencao('editar')">
-              <i class="fas fa-edit"></i> EDITAR
-            </button>
-            <button class="btn-primary" onclick="abrirModalManutencao('adicionar')">
-              <i class="fas fa-plus"></i> + Adicionar
-            </button>
-          </div>
+          <h1 class="page-title">Manutenção</h1>
+          <p class="page-subtitle">Histórico e agendamentos</p>
         </div>
+        <div class="header-actions">
+          <button class="btn-primary" onclick="abrirModalManutencao('adicionar')">
+            <i class="fas fa-plus"></i> + Adicionar
+          </button>
+        </div>
+      </div>
 
         <div class="manut-summary" id="manut-summary">
           <div class="manut-stat stat-orange">
@@ -675,17 +682,23 @@
   // ─── FROTA ────────────────────────────────────────────────────────────────
   function bindFrotaTabs() {
     document.querySelectorAll("[data-tab]").forEach(btn => {
+      btn.cloneNode(true); // Limpa listeners antigos se houver re-execução
       btn.addEventListener("click", () => {
         document.querySelectorAll("[data-tab]").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
-        currentTab = btn.dataset.tab;
+        currentTab = btn.dataset.tab; // Armazena "caminhoes" ou "carretas"
         renderFrota();
       });
     });
+
     $("frota-search").addEventListener("input", renderFrota);
-    $("btn-add-veiculo").addEventListener("click", () => {
-      openModal(currentTab === "caminhoes" ? "frota" : "carreta");
-    });
+    
+    // CORREÇÃO: O botão adicionar agora captura dinamicamente o estado correto
+    $("btn-add-veiculo").onclick = () => {
+      // Se a aba atual for "caminhoes", abre o form de "frota". Se for "carretas", abre "carreta".
+      const type = currentTab === "caminhoes" ? "frota" : "carreta";
+      openModal(type);
+    };
   }
 
   async function loadFrota() {
@@ -699,17 +712,17 @@
   }
 
   function renderFrota() {
-      const query = $("frota-search").value.toLowerCase();
+      const queryStr = $("frota-search").value.toLowerCase();
       const list = currentTab === "caminhoes" ? frotas : carretas;
       const filtered = list.filter(v =>
-        (v.placa || "").toLowerCase().includes(query) ||
-        (v.modelo || "").toLowerCase().includes(query)
+        (v.placa || "").toLowerCase().includes(queryStr) ||
+        (v.modelo || "").toLowerCase().includes(queryStr)
       );
       const container = $("frota-list");
       if (!filtered.length) { container.innerHTML = '<div class="empty-state">Nenhum veículo encontrado.</div>'; return; }
     
       container.innerHTML = filtered.map(v => `
-        <div class="vehicle-card clickable-card" data-placa="${v.placa}" title="Clique para ver detalhes">
+        <div class="vehicle-card clickable-card" data-placa="${v.placa}" data-tipo="${currentTab}" data-docid="${v.id}" title="Clique para ver detalhes">
           <div class="vehicle-icon">
             ${currentTab === "caminhoes" ?
               `<svg width="32" height="32" fill="none" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2" stroke="#FF6B00" stroke-width="2"/><path d="M16 8h5l3 3v4h-8V8Z" stroke="#FF6B00" stroke-width="2"/><circle cx="5.5" cy="18.5" r="2.5" stroke="#FF6B00" stroke-width="2"/><circle cx="18.5" cy="18.5" r="2.5" stroke="#FF6B00" stroke-width="2"/></svg>` :
@@ -722,83 +735,216 @@
             ${v.filial ? `<div class="vehicle-badge">${v.filial}</div>` : ""}
           </div>
           <div class="vehicle-actions">
-            ${currentUserData?.tipo === "admin" ? `<button class="btn-icon btn-edit" data-docid="${v.id}" data-type="${currentTab}" title="Editar">✏️</button>` : ""}
+            ${true ? `
+              <button class="btn-card-action btn-card-edit" data-docid="${v.id}" data-type="${currentTab}" title="Editar">
+                <svg width="15" height="15" fill="none" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Editar</span>
+              </button>
+              <button class="btn-card-action btn-card-delete" data-docid="${v.id}" data-col="${currentTab === 'caminhoes' ? 'caminhoes' : 'carretas'}" title="Excluir">
+                <svg width="15" height="15" fill="none" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Excluir</span>
+              </button>
+            ` : ""}
           </div>
         </div>`).join("");
 
-      // Atribui a função de navegação para detalhes ao corpo do card
+      // Clique no card para ver Detalhes
       container.querySelectorAll(".clickable-card").forEach(card => {
         card.addEventListener("click", (e) => {
-          // Impede que o clique no botão de editar dispare a navegação para detalhes
-          if (e.target.closest('.btn-edit')) return;
-          navigate("detail", card.dataset.placa);
+          if (e.target.closest('.btn-card-edit') || e.target.closest('.btn-card-delete')) return;
+          navigate("detail", { placa: card.dataset.placa, tipo: card.dataset.tipo });
         });
       });
 
-      container.querySelectorAll(".btn-edit").forEach(btn => {
+      // FUNÇÃO EDITAR: Direto da aba principal da frota
+      container.querySelectorAll(".btn-card-edit").forEach(btn => {
         btn.addEventListener("click", (e) => {
-          e.stopPropagation(); // Garante que apenas o modal de edição abra
-          openModal(btn.dataset.type === "caminhoes" ? "frota" : "carreta", btn.dataset.docid);
+          e.stopPropagation(); 
+          const modalType = btn.dataset.type === "caminhoes" ? "frota" : "carreta";
+          openModal(modalType, btn.dataset.docid);
+        });
+      });
+
+      // FUNÇÃO EXCLUIR: Deleta do Firestore e atualiza a interface local
+      container.querySelectorAll(".btn-card-delete").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          if (!confirm("Tem certeza que deseja remover este veículo de forma permanente?")) return;
+          
+          const collectionName = btn.dataset.col;
+          const docId = btn.dataset.docid;
+          
+          try {
+            await deleteDoc(doc(db, collectionName, docId));
+            showToast("Veículo removido com sucesso!");
+            loadFrota(); 
+          } catch (err) {
+            showToast("Erro ao excluir: " + err.message, "error");
+          }
         });
       });
   }
 
   // ─── VEHICLE DETAIL ───────────────────────────────────────────────────────
-  async function loadDetail(placa) {
+  async function loadDetail(extra) {
+    // extra can be { placa, tipo } or legacy string (placa only → caminhao)
+    const placa = typeof extra === "string" ? extra : extra?.placa;
+    const tipo  = typeof extra === "string" ? "caminhoes" : (extra?.tipo || "caminhoes");
+
     $("detail-content").innerHTML = '<div class="empty-state">Carregando...</div>';
     $("btn-back-detail").onclick = () => navigate("data");
 
-    const snap = await getDocs(query(collection(db, "caminhoes"), where("placa", "==", placa)));
+    // Hide/show admin actions
+    const actionsEl = $("detail-actions");
+    if (currentUserData?.tipo === "admin") {
+      actionsEl.classList.remove("hidden");
+    } else {
+      actionsEl.classList.add("hidden");
+    }
+
+    const snap = await getDocs(query(collection(db, tipo), where("placa", "==", placa)));
     if (snap.empty) { $("detail-content").innerHTML = '<div class="empty-state">Veículo não encontrado.</div>'; return; }
-    const v = snap.docs[0].data();
 
-    // Composição
-    const compSnap = await getDocs(query(collection(db, "composicoes"), where("id_cavalo", "==", placa)));
-    const comp = compSnap.empty ? null : compSnap.docs[0].data();
+    const docRef = snap.docs[0];
+    const v = docRef.data();
+    const docId = docRef.id;
+    const modalType = tipo === "caminhoes" ? "frota" : "carreta";
 
-    $("detail-content").innerHTML = `
-      <div class="detail-hero">
-        <div class="detail-truck-icon">🚛</div>
-        <div class="detail-title">${v.placa}</div>
-        <div class="detail-subtitle">${v.modelo || "—"} · ${v.marca || "—"}</div>
-        <div class="detail-status-badge status-${(v.status || "ativo").toLowerCase()}">${v.status || "ativo"}</div>
-      </div>
-      <div class="detail-grid">
-        <div class="section-card">
-          <div class="section-card-header"><h3>Dados Técnicos</h3></div>
-          <div class="info-rows">
-            ${infoRow("Placa", v.placa)}
-            ${infoRow("Marca", v.marca)}
-            ${infoRow("Modelo", v.modelo)}
-            ${infoRow("Ano Modelo", v.ano_modelo)}
-            ${infoRow("Cor", v.cor)}
-            ${infoRow("Chassi", v.chassi)}
-            ${infoRow("RENAVAM", v.renavam)}
+    // Wire detail action buttons
+    $("btn-detail-edit").onclick = () => openModal(modalType, docId);
+    $("btn-detail-delete").onclick = async () => {
+      if (!confirm(`Tem certeza que deseja excluir ${v.placa} permanentemente?`)) return;
+      try {
+        await deleteDoc(doc(db, tipo, docId));
+        showToast("Veículo excluído com sucesso!");
+        navigate("data");
+      } catch (err) {
+        showToast("Erro ao excluir: " + err.message, "error");
+      }
+    };
+
+    if (tipo === "caminhoes") {
+      // ── CAMINHÃO DETAIL ────────────────────────────────────────────
+      const compSnap = await getDocs(query(collection(db, "composicoes"), where("id_cavalo", "==", placa)));
+      const comp = compSnap.empty ? null : compSnap.docs[0].data();
+
+      $("detail-content").innerHTML = `
+        <div class="detail-hero detail-hero-truck">
+          <div class="detail-vehicle-badge detail-badge-truck">
+            <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2" stroke="currentColor" stroke-width="2.5"/><path d="M16 8h5l3 3v4h-8V8Z" stroke="currentColor" stroke-width="2.5"/><circle cx="5.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/><circle cx="18.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/></svg>
+            Caminhão
           </div>
+          <div class="detail-title">${v.placa}</div>
+          <div class="detail-subtitle">${v.modelo || "—"} · ${v.marca || "—"}</div>
+          <div class="detail-status-badge status-${(v.status || "ativo").toLowerCase()}">${v.status || "Ativo"}</div>
         </div>
-        <div class="section-card">
-          <div class="section-card-header"><h3>Operação</h3></div>
-          <div class="info-rows">
-            ${infoRow("Filial", v.filial)}
-            ${infoRow("Tecnologia", v.tecnologia)}
-            ${infoRow("Operação", v.operacao)}
-            ${infoRow("Atualizado por", v.last_updated_by_name)}
-          </div>
-        </div>
-        <div class="section-card detail-comp">
-          <div class="section-card-header"><h3>Composição (Carretas)</h3></div>
-          <div class="comp-slots">
-            <div class="comp-slot">
-              <div class="comp-slot-label">Carreta 1</div>
-              <div class="comp-slot-value">${comp?.id_carreta1 || "Disponível"}</div>
+        <div class="detail-grid">
+          <div class="section-card">
+            <div class="section-card-header"><h3>Dados Técnicos</h3></div>
+            <div class="info-rows">
+              ${infoRow("Placa", v.placa)}
+              ${infoRow("Marca", v.marca)}
+              ${infoRow("Modelo", v.modelo)}
+              ${infoRow("Ano Modelo", v.ano_modelo)}
+              ${infoRow("Cor", v.cor)}
+              ${infoRow("Chassi", v.chassi)}
+              ${infoRow("RENAVAM", v.renavam)}
             </div>
-            <div class="comp-slot">
-              <div class="comp-slot-label">Carreta 2</div>
-              <div class="comp-slot-value">${comp?.id_carreta2 || "Disponível"}</div>
+          </div>
+          <div class="section-card">
+            <div class="section-card-header"><h3>Operação</h3></div>
+            <div class="info-rows">
+              ${infoRow("Filial", v.filial)}
+              ${infoRow("Tecnologia", v.tecnologia)}
+              ${infoRow("Operação", v.operacao)}
+              ${infoRow("Atualizado por", v.last_updated_by_name)}
             </div>
           </div>
+          <div class="section-card detail-comp">
+            <div class="section-card-header"><h3>Composição (Carretas)</h3></div>
+            <div class="comp-slots">
+              <div class="comp-slot ${comp?.id_carreta1 ? 'comp-slot-occupied' : ''}">
+                <div class="comp-slot-label">Carreta 1</div>
+                <div class="comp-slot-value">${comp?.id_carreta1 || "Disponível"}</div>
+              </div>
+              <div class="comp-slot ${comp?.id_carreta2 ? 'comp-slot-occupied' : ''}">
+                <div class="comp-slot-label">Carreta 2</div>
+                <div class="comp-slot-value">${comp?.id_carreta2 || "Disponível"}</div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+
+    } else {
+      // ── CARRETA DETAIL ─────────────────────────────────────────────
+      // Find current composition (which truck is pulling this trailer)
+      const compSnap = await getDocs(query(collection(db, "composicoes"),
+        where("id_carreta1", "==", placa)));
+      const compSnap2 = await getDocs(query(collection(db, "composicoes"),
+        where("id_carreta2", "==", placa)));
+      const comp = !compSnap.empty ? compSnap.docs[0].data()
+                 : !compSnap2.empty ? compSnap2.docs[0].data()
+                 : null;
+
+      $("detail-content").innerHTML = `
+        <div class="detail-hero detail-hero-carreta">
+          <div class="detail-vehicle-badge detail-badge-carreta">
+            <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="12" rx="2" stroke="currentColor" stroke-width="2.5"/><circle cx="7" cy="19" r="2" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="19" r="2" stroke="currentColor" stroke-width="2"/></svg>
+            Carreta
+          </div>
+          <div class="detail-title">${v.placa}</div>
+          <div class="detail-subtitle">${v.modelo || "—"} · ${v.marca || "—"}</div>
+          <div class="detail-status-badge ${comp ? 'status-em-uso' : 'status-disponivel'}">${comp ? "Em Uso" : "Disponível"}</div>
         </div>
-      </div>`;
+        <div class="detail-grid">
+          <div class="section-card">
+            <div class="section-card-header"><h3>Dados Técnicos</h3></div>
+            <div class="info-rows">
+              ${infoRow("Placa", v.placa)}
+              ${infoRow("Marca", v.marca)}
+              ${infoRow("Modelo", v.modelo)}
+              ${infoRow("Ano Fabricação", v.ano_fabricacao)}
+              ${infoRow("Ano Modelo", v.ano_modelo)}
+              ${infoRow("Cor", v.cor)}
+              ${infoRow("Chassi", v.chassi)}
+              ${infoRow("RENAVAM", v.renavam)}
+            </div>
+          </div>
+          <div class="section-card">
+            <div class="section-card-header"><h3>Capacidade & Operação</h3></div>
+            <div class="info-rows">
+              ${infoRow("Capacidade (t)", v.capacidade)}
+              ${infoRow("Cavalo Atual", comp ? comp.id_cavalo : "Sem cavalo")}
+              ${infoRow("Posição na Composição", !comp ? "—" : comp.id_carreta1 === placa ? "Carreta 1" : "Carreta 2")}
+              ${infoRow("Atualizado por", v.last_updated_by_name)}
+            </div>
+          </div>
+          <div class="section-card detail-comp">
+            <div class="section-card-header"><h3>Composição Atual</h3></div>
+            <div class="comp-slots">
+              ${comp ? `
+                <div class="comp-slot comp-slot-occupied">
+                  <div class="comp-slot-label">Cavalo</div>
+                  <div class="comp-slot-value">${comp.id_cavalo || "—"}</div>
+                </div>
+                <div class="comp-slot ${comp.id_carreta1 === placa ? 'comp-slot-this' : (comp.id_carreta1 ? 'comp-slot-occupied' : '')}">
+                  <div class="comp-slot-label">Carreta 1</div>
+                  <div class="comp-slot-value">${comp.id_carreta1 || "Disponível"}</div>
+                </div>
+                <div class="comp-slot ${comp.id_carreta2 === placa ? 'comp-slot-this' : (comp.id_carreta2 ? 'comp-slot-occupied' : '')}">
+                  <div class="comp-slot-label">Carreta 2</div>
+                  <div class="comp-slot-value">${comp.id_carreta2 || "Disponível"}</div>
+                </div>
+              ` : `
+                <div class="comp-slot-empty">
+                  <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  <p>Esta carreta não está associada a nenhuma composição no momento.</p>
+                </div>
+              `}
+            </div>
+          </div>
+        </div>`;
+    }
   }
 
   function infoRow(label, val) {
@@ -810,33 +956,44 @@
     const snap = await getDocs(query(collection(db, "manutencoes"), orderBy("data", "desc")));
     const docs = [];
     let ag = 0, at = 0, co = 0;
+    
     snap.forEach(d => {
-      const data = d.data();
+      // Capturamos o ID do documento junto com os dados internos
+      const data = { id: d.id, ...d.data() };
       docs.push(data);
+      
       const s = (data.status || "").toLowerCase();
       if (s === "agendada") ag++;
       else if (s === "atrasada") at++;
       else if (s === "concluída" || s === "concluida") co++;
     });
+    
     $("ms-agendadas").textContent = ag;
     $("ms-atrasadas").textContent = at;
     $("ms-concluidas").textContent = co;
 
-    if (!docs.length) { $("manut-list").innerHTML = '<div class="empty-state">Nenhuma manutenção registrada.</div>'; return; }
+    if (!docs.length) { 
+      $("manut-list").innerHTML = '<div class="empty-state">Nenhuma manutenção registrada.</div>'; 
+      return; 
+    }
+  
     $("manut-list").innerHTML = docs.map(m => {
       const statusColor = { "agendada": "#FF6B00", "atrasada": "#EF4444", "concluída": "#22C55E", "concluida": "#22C55E" };
       const color = statusColor[(m.status || "").toLowerCase()] || "#888";
       const dt = m.data?.toDate?.();
       const dtStr = dt ? dt.toLocaleDateString("pt-BR") : "—";
+      
+      // Adicionamos a chamada da função 'editarRegistro' ao clicar no card, passando o ID e o status atual
       return `
-        <div class="manut-card">
+        <div class="manut-card clickable-card" onclick="editarRegistro('${m.id}', '${m.status || 'Agendada'}')" title="Clique para alterar o status">
           <div class="manut-icon" style="background:${color}22; color:${color}">🔧</div>
           <div class="manut-info">
             <div class="manut-veiculo">${m.placa_veiculo || "Veículo"}</div>
             <div class="manut-servico">${m.tipo_servico || "Serviço Geral"}</div>
+          </div>
             <div class="manut-meta">
               <span>📅 ${dtStr}</span>
-              ${m.custo ? `<span>💰 R$ ${m.custo}</span>` : ""}
+              ${m.custo ? `<span>💰 R$ ${m.custo.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>` : ""}
             </div>
           </div>
           <div class="manut-status-badge" style="background:${color}22; color:${color}">${m.status || "—"}</div>
@@ -847,50 +1004,154 @@
 // Simulação de banco de dados local
   let manutencoes = []; 
 
-  function abrirModalManutencao(modo) {
-      if (modo === 'adicionar') {
-          const veiculo = prompt("Digite o ID do Veículo (ex: FROTA-1011):");
-          const servico = prompt("Descrição do Serviço:");
-          const data = new Date().toLocaleDateString('pt-BR');
-        
-          if (veiculo && servico) {
-              const novaManut = {
-                  id: Date.now(),
-                  veiculo: veiculo,
-                  servico: servico,
-                  data: data,
-                  status: 'AGENDADA'
-              };
-              manutencoes.push(novaManut);
-              renderizarListaManutencao();
-              atualizarResumo();
-          }
-      } else {
-          alert("Selecione um card abaixo para editar ou funcionalidade de edição em lote.");
-      }
-  }
+// ─── MANUTENÇÃO INTEGRADA COM FIRESTORE ───────────────────────────────────────
 
-  function renderizarListaManutencao() {
-      const lista = document.getElementById('manut-list');
-      if (manutencoes.length === 0) return;
+// Adicionamos 'window.' para garantir que o botão HTML a enxergue
+// ─── MODAIS CUSTOMIZADOS DE MANUTENÇÃO (SEM PROMPTS NATIVOS) ───────────────────
 
-      lista.innerHTML = manutencoes.map(m => `
-          <div class="manut-card" onclick="editarRegistro(${m.id})">
-              <div class="manut-icon" style="background: #fff5f5;"><i class="fas fa-wrench"></i></div>
-              <div class="manut-info">
-                  <div class="manut-veiculo">${m.veiculo}</div>
-                  <div class="manut-servico">${m.servico}</div>
-                  <div class="manut-meta"><span>📅 ${m.data}</span></div>
-              </div>
-              <span class="manut-status-badge">${m.status}</span>
+  window.abrirModalManutencao = function(modo) {
+    if (modo !== 'adicionar') return;
+
+    // Cria a estrutura do modal de Adição
+    const backdrop = document.createElement("div");
+    backdrop.className = "custom-modal-backdrop";
+    backdrop.id = "modal-manut-add";
+
+    backdrop.innerHTML = `
+      <div class="custom-modal-box">
+        <div class="custom-modal-header">
+          <div class="custom-modal-title">🔧 Adicionar Registro de Manutenção</div>
+          <button class="custom-modal-close" onclick="document.getElementById('modal-manut-add').remove()">&times;</button>
+        </div>
+        <div class="custom-modal-body">
+          <div class="custom-form-group">
+            <label>Placa do Veículo</label>
+            <input type="text" id="add-manut-placa" class="custom-form-input" placeholder="Ex: ABC1D23" style="text-transform: uppercase;">
           </div>
-      `).join('');
+          <div class="custom-form-group">
+            <label>Descrição do Serviço</label>
+            <input type="text" id="add-manut-servico" class="custom-form-input" placeholder="Ex: Troca de óleo e filtros">
+          </div>
+          <div class="custom-form-group">
+            <label>Custo Estimado (R$)</label>
+            <input type="number" id="add-manut-custo" class="custom-form-input" placeholder="Ex: 450.00" step="0.01">
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button class="btn-secondary" style="padding: 8px 16px;" onclick="document.getElementById('modal-manut-add').remove()">Cancelar</button>
+          <button class="btn-primary" style="padding: 8px 16px;" id="btn-submit-add-manut">Salvar Registro</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(backdrop);
+
+    // Ação de Salvar na coleção do Firestore
+    document.getElementById("btn-submit-add-manut").onclick = async () => {
+      const placa = document.getElementById("add-manut-placa").value.trim();
+      const servico = document.getElementById("add-manut-servico").value.trim();
+      const custoRaw = document.getElementById("add-manut-custo").value;
+
+      if (!placa || !servico) {
+        alert("Por favor, preencha os campos obrigatórios (Placa e Serviço).");
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, "manutencoes"), {
+          placa_veiculo: placa.toUpperCase(),
+          tipo_servico: servico,
+          data: new Date(),
+          status: 'Agendada',
+          custo: custoRaw ? parseFloat(custoRaw) : null
+        });
+
+        showToast("Manutenção agendada com sucesso!");
+        backdrop.remove(); // Fecha o modal
+        loadMaintenance(); // Recarrega a lista
+      } catch (err) {
+        showToast("Erro ao agendar: " + err.message, "error");
+      }
+    };
+  };
+
+  window.editarRegistro = function(docId, statusAtual) {
+    // Cria a estrutura do modal de Edição de Status
+    const backdrop = document.createElement("div");
+    backdrop.className = "custom-modal-backdrop";
+    backdrop.id = "modal-manut-edit";
+
+    backdrop.innerHTML = `
+      <div class="custom-modal-box">
+        <div class="custom-modal-header">
+          <div class="custom-modal-title">📝 Edição de Registro de Manutenção</div>
+          <button class="custom-modal-close" onclick="document.getElementById('modal-manut-edit').remove()">&times;</button>
+        </div>
+        <div class="custom-modal-body">
+          <div class="custom-form-group">
+            <label>Alterar Status do Serviço</label>
+            <select id="edit-manut-status" class="custom-form-input">
+              <option value="Agendada" ${statusAtual === 'Agendada' ? 'selected' : ''}>Agendada</option>
+              <option value="Atrasada" ${statusAtual === 'Atrasada' ? 'selected' : ''}>Atrasada</option>
+              <option value="Concluída" ${statusAtual === 'Concluída' || statusAtual === 'Concluida' ? 'selected' : ''}>Concluída</option>
+            </select>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button class="btn-secondary" style="padding: 8px 16px;" onclick="document.getElementById('modal-manut-edit').remove()">Cancelar</button>
+          <button class="btn-primary" style="padding: 8px 16px;" id="btn-submit-edit-manut">Atualizar Status</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(backdrop);
+
+    // Ação de Atualizar o campo no Firestore
+    document.getElementById("btn-submit-edit-manut").onclick = async () => {
+      const novoStatus = document.getElementById("edit-manut-status").value;
+
+      try {
+        const docRef = doc(db, "manutencoes", docId);
+        await updateDoc(docRef, {
+          status: novoStatus
+        });
+
+        showToast("Status atualizado com sucesso!");
+        backdrop.remove(); // Fecha o modal
+        loadMaintenance(); // Recarrega a lista
+      } catch (err) {
+        showToast("Erro ao atualizar status: " + err.message, "error");
+      }
+    };
+  };
+
+// Função para mudar o status de uma manutenção ao clicar no card
+async function editarRegistro(docId, statusAtual) {
+  const novoStatus = prompt(`Alterar status da manutenção. Digite uma das opções:\n- Agendada\n- Atrasada\n- Concluída\n\nStatus Atual: ${statusAtual}`);
+  
+  if (!novoStatus) return; // Se cancelar, não faz nada
+  
+  const statusFormatado = novoStatus.trim();
+  const validos = ["Agendada", "Atrasada", "Concluída", "Concluida"];
+  
+  // Validação simples do que foi digitado
+  if (!validos.some(v => v.toLowerCase() === statusFormatado.toLowerCase())) {
+    alert("Status inválido! Digite apenas: Agendada, Atrasada ou Concluída.");
+    return;
   }
 
-  function atualizarResumo() {
-      // Atualiza os números nos cards coloridos lá do topo
-      document.getElementById('ms-agendadas').innerText = manutencoes.length;
+  try {
+    const docRef = doc(db, "manutencoes", docId);
+    await updateDoc(docRef, {
+      status: statusFormatado
+    });
+
+    showToast("Status atualizado com sucesso!");
+    loadMaintenance(); // Atualiza a tela
+  } catch (err) {
+    showToast("Erro ao atualizar status: " + err.message, "error");
   }
+}
 
   // ─── PROFILE ──────────────────────────────────────────────────────────────
   async function loadProfile() {
