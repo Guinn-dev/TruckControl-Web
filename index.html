@@ -19,7 +19,7 @@
   <div id="loading-screen">
     <div class="loader-inner">
       <div class="loader-logo">
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+        <svg width="56" height="56" viewBox="0 0 48 48" fill="none">
           <rect width="48" height="48" rx="12" fill="#FF6B00"/>
           <path d="M8 30 L24 14 L40 30" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
           <rect x="6" y="30" width="36" height="8" rx="4" fill="white"/>
@@ -59,21 +59,36 @@
       </div>
       <div class="login-form-area">
         <div class="login-card">
-          <h2>Inicie a sessão</h2>
-          <p class="login-subtitle">Acesse o painel de controle de sua frota</p>
+          <h2>Acesse o sistema</h2>
+          <p class="login-subtitle">Entre com suas credenciais para acessar o sistema</p>
+          
           <div id="login-error" class="alert alert-error hidden"></div>
+          
           <div class="form-group">
-            <label>Usuário</label>
-            <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email" />
+            <label>Login (E-mail)</label>
+            <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email"/>
           </div>
+          
           <div class="form-group">
             <label>Senha</label>
-            <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
+            <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"/>
+            <div class="forgot-wrapper">
+              <span class="forgot-link" id="btn-forgot">Esqueci minha senha</span>
+            </div>
           </div>
+          
           <button class="btn btn-primary btn-full" id="btn-login">
             <span>Entrar</span>
             <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
+          
+          <div class="login-ui-divider">OU</div>
+          
+          <button class="btn btn-secondary btn-full" id="btn-request-access">
+            Solicite um acesso
+          </button>
+          
+          <p class="login-footer">Ao clicar em entrar, você concorda com nossos <a id="btn-terms">Termos de Serviço</a> e <a id="btn-privacy">Políticas de Privacidade</a>.</p>
         </div>
       </div>
     </div>
@@ -301,6 +316,10 @@
             <div class="ms-num" id="ms-agendadas">—</div>
             <div class="ms-label">Agendadas</div>
           </div>
+          <div class="manut-stat stat-yellow">
+            <div class="ms-num" id="ms-andamento">—</div>
+            <div class="ms-label">Em andamento</div>
+          </div>
           <div class="manut-stat stat-red">
             <div class="ms-num" id="ms-atrasadas">—</div>
             <div class="ms-label">Atrasadas</div>
@@ -309,6 +328,11 @@
             <div class="ms-num" id="ms-concluidas">—</div>
             <div class="ms-label">Concluídas</div>
           </div>
+        </div>
+
+        <div class="search-bar-wrap">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input type="text" id="frota-search" placeholder="Pesquisar por placa ou modelo..." />
         </div>
 
         <div id="manut-list" class="manut-grid">
@@ -453,6 +477,114 @@
     }
   });
 
+  // ─── INTERAÇÕES COMPLEMENTARES DE LOGIN (ESQUECI SENHA & SOLICITAR ACESSO) ───
+
+  // 1. Modal: Esqueci Minha Senha (Idêntico ao padrão visual do sistema)
+  if ($("btn-forgot")) {
+    $("btn-forgot").addEventListener("click", () => {
+      const backdrop = document.createElement("div");
+      backdrop.className = "custom-modal-backdrop";
+      backdrop.id = "modal-forgot-pass";
+
+      backdrop.innerHTML = `
+        <div class="custom-modal-box">
+          <div class="custom-modal-header">
+            <div class="custom-modal-title">🔑 Recuperação de Acesso</div>
+            <button class="custom-modal-close" onclick="document.getElementById('modal-forgot-pass').remove()">&times;</button>
+          </div>
+          <div class="custom-modal-body">
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 18px; line-height: 1.5;">
+              Insira o seu e-mail cadastrado na plataforma para receber as instruções e o link de redefinição de senha.
+            </p>
+            <div class="custom-form-group">
+              <label>E-mail Institucional</label>
+              <input type="email" id="forgot-email-input" class="custom-form-input" placeholder="seu@email.com">
+            </div>
+          </div>
+          <div class="custom-modal-footer">
+            <button class="btn btn-secondary" style="padding: 8px 16px;" onclick="document.getElementById('modal-forgot-pass').remove()">Cancelar</button>
+            <button class="btn btn-primary" style="padding: 8px 16px;" id="btn-submit-forgot">Enviar Link</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(backdrop);
+
+      document.getElementById("btn-submit-forgot").onclick = async () => {
+        const email = document.getElementById("forgot-email-input").value.trim();
+        if (!email) { alert("Por favor, introduza o seu e-mail."); return; }
+        
+        try {
+          // Caso queira integrar com Firebase Auth no futuro, descomente a linha abaixo:
+          // await sendPasswordResetEmail(auth, email);
+          
+          showToast("Link de recuperação enviado para: " + email);
+          backdrop.remove();
+        } catch (err) {
+          showToast("Erro ao processar requisição: " + err.message, "error");
+        }
+      };
+    });
+  }
+
+  // 2. Modal: Solicitar Novo Acesso
+  if ($("btn-request-access")) {
+    $("btn-request-access").addEventListener("click", () => {
+      const backdrop = document.createElement("div");
+      backdrop.className = "custom-modal-backdrop";
+      backdrop.id = "modal-request-access";
+
+      backdrop.innerHTML = `
+        <div class="custom-modal-box">
+          <div class="custom-modal-header">
+            <div class="custom-modal-title">📋 Solicitar Novo Acesso</div>
+            <button class="custom-modal-close" onclick="document.getElementById('modal-request-access').remove()">&times;</button>
+          </div>
+          <div class="custom-modal-body">
+            <div class="custom-form-group">
+              <label>Nome Completo</label>
+              <input type="text" id="req-nome" class="custom-form-input" placeholder="Ex: Guilherme Silva">
+            </div>
+            <div class="custom-form-group">
+              <label>E-mail Corporativo</label>
+              <input type="email" id="req-email" class="custom-form-input" placeholder="seu@email.com">
+            </div>
+            <div class="custom-form-group">
+              <label>Departamento / Filial</label>
+              <input type="text" id="req-filial" class="custom-form-input" placeholder="Ex: Logística - SP">
+            </div>
+          </div>
+          <div class="custom-modal-footer">
+            <button class="btn btn-secondary" style="padding: 8px 16px;" onclick="document.getElementById('modal-request-access').remove()">Cancelar</button>
+            <button class="btn btn-primary" style="padding: 8px 16px;" id="btn-submit-request">Enviar Solicitação</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(backdrop);
+
+      document.getElementById("btn-submit-request").onclick = async () => {
+        const nome = document.getElementById("req-nome").value.trim();
+        const email = document.getElementById("req-email").value.trim();
+        const filial = document.getElementById("req-filial").value.trim();
+
+        if (!nome || !email || !filial) { alert("Por favor, preencha todos os campos."); return; }
+
+        try {
+          await addDoc(collection(db, "solicitacoes_acesso"), {
+            nome,
+            email,
+            filial,
+            status: "Pendente",
+            data_solicitacao: new Date()
+          });
+
+          showToast("Solicitação enviada com sucesso! Aguarde aprovação.");
+          backdrop.remove();
+        } catch (err) {
+          showToast("Erro ao salvar dados: " + err.message, "error");
+        }
+      };
+    });
+  }
   // ─── LOGIN ────────────────────────────────────────────────────────────────
   function showLoginPage() {
     hide($("main-layout"));
@@ -463,32 +595,47 @@
     const email = $("login-email").value.trim();
     const pass = $("login-password").value.trim();
     if (!email || !pass) { showLoginError("Preencha e-mail e senha."); return; }
-    setLoading($("btn-login"), true);
+    $("btn-login").disabled = true; $("btn-login").style.opacity = "0.6";
     try {
       await signInWithEmailAndPassword(auth, email, pass);
     } catch (e) {
       showLoginError(getAuthError(e.code));
+      $("btn-login").disabled = false; $("btn-login").style.opacity = "1";
     }
-    setLoading($("btn-login"), false);
   });
 
+  $("login-password").addEventListener("keydown", e => { if (e.key === "Enter") $("btn-login").click(); });
+
   function showLoginError(msg) {
-    const el = $("login-error");
-    el.textContent = msg;
-    show(el);
+    const el = $("login-error"); el.textContent = msg; show(el);
     setTimeout(() => hide(el), 4000);
   }
-
   function getAuthError(code) {
-    const map = {
+    const m = {
       "auth/user-not-found": "Usuário não encontrado.",
       "auth/wrong-password": "Senha incorreta.",
       "auth/invalid-email": "E-mail inválido.",
       "auth/too-many-requests": "Muitas tentativas. Tente mais tarde.",
       "auth/invalid-credential": "Credenciais inválidas.",
     };
-    return map[code] || "Erro ao entrar. Tente novamente.";
+    return m[code] || "Erro ao entrar. Tente novamente.";
   }
+
+  // Forgot password
+  $("btn-forgot").addEventListener("click", () => {
+    const email = $("login-email").value.trim();
+    if (!email) { showLoginError("Digite seu e-mail acima para recuperar a senha."); return; }
+    openModal("reset-password", null, email);
+  });
+
+  // Terms
+  $("btn-terms").addEventListener("click", () => openModal("terms"));
+  $("btn-privacy").addEventListener("click", () => openModal("terms"));
+
+  // Request access
+  $("btn-request-access").addEventListener("click", () => {
+    showLoginError("Entre em contato com o administrador: admin@jdc.com.br");
+  });
 
   // ─── LOGOUT ───────────────────────────────────────────────────────────────
   $("btn-logout").addEventListener("click", async () => {
@@ -650,10 +797,10 @@
   }
 
   function drawManutStatusChart(snap) {
-    const counts = { "Agendada": 0, "Atrasada": 0, "Concluída": 0 };
+    const counts = { "Agendada": 0,"Em andamento": 0,  "Atrasada": 0, "Concluída": 0 };
     snap.forEach(d => { const s = d.data().status || "Agendada"; if (s in counts) counts[s]++; });
     const total = Object.values(counts).reduce((a, b) => a + b, 0) || 1;
-    const colors = { "Agendada": "#FF6B00", "Atrasada": "#EF4444", "Concluída": "#22C55E" };
+    const colors = { "Agendada": "#FF6B00", "Em andamento": "#9008ea", "Atrasada": "#EF4444", "Concluída": "#22C55E" };
     const canvas = $("chart-manut-status");
     const ctx = canvas.getContext("2d");
     const size = 180; canvas.width = size; canvas.height = size;
@@ -952,45 +1099,66 @@
   }
 
   // ─── MAINTENANCE ──────────────────────────────────────────────────────────
+  let cacheManutencoes = []; // Cache para busca instantânea
+
   async function loadMaintenance() {
     const snap = await getDocs(query(collection(db, "manutencoes"), orderBy("data", "desc")));
-    const docs = [];
-    let ag = 0, at = 0, co = 0;
+    cacheManutencoes = [];
+    let ag = 0, and = 0, at = 0, co = 0;
     
     snap.forEach(d => {
-      // Capturamos o ID do documento junto com os dados internos
       const data = { id: d.id, ...d.data() };
-      docs.push(data);
+      cacheManutencoes.push(data);
       
       const s = (data.status || "").toLowerCase();
       if (s === "agendada") ag++;
+      else if (s === "em andamento" || s === "andamento") and++;
       else if (s === "atrasada") at++;
       else if (s === "concluída" || s === "concluida") co++;
     });
     
-    $("ms-agendadas").textContent = ag;
-    $("ms-atrasadas").textContent = at;
-    $("ms-concluidas").textContent = co;
+    if ($("ms-agendadas")) $("ms-agendadas").textContent = ag;
+    if ($("ms-andamento")) $("ms-andamento").textContent = and; // Certifique-se que este ID existe no HTML
+    if ($("ms-atrasadas")) $("ms-atrasadas").textContent = at;
+    if ($("ms-concluidas")) $("ms-concluidas").textContent = co;
 
-    if (!docs.length) { 
-      $("manut-list").innerHTML = '<div class="empty-state">Nenhuma manutenção registrada.</div>'; 
-      return; 
-    }
+    renderizarListaManutencao(""); 
+  }
   
-    $("manut-list").innerHTML = docs.map(m => {
-      const statusColor = { "agendada": "#FF6B00", "atrasada": "#EF4444", "concluída": "#22C55E", "concluida": "#22C55E" };
-      const color = statusColor[(m.status || "").toLowerCase()] || "#888";
+  function renderizarListaManutencao(filtro = "") {
+    const container = $("manut-list");
+    
+    const dadosFiltrados = cacheManutencoes.filter(m => {
+      const placa = (m.placa_veiculo || "").toLowerCase();
+      const servico = (m.tipo_servico || "").toLowerCase();
+      return placa.includes(filtro) || servico.includes(filtro);
+    });
+
+    if (!dadosFiltrados.length) {
+      container.innerHTML = '<div class="empty-state">Nenhum registro encontrado.</div>';
+      return;
+    }
+
+    container.innerHTML = dadosFiltrados.map(m => {
+      // Mapeamento para 4 status
+      const statusColor = { 
+        "agendada": "#FF6B00", 
+        "em andamento": "#9008ea", 
+        "atrasada": "#EF4444", 
+        "concluída": "#22C55E" 
+      };
+      
+      const statusLimpo = (m.status || "Agendada").toLowerCase();
+      const color = statusColor[statusLimpo] || "#888";
       const dt = m.data?.toDate?.();
       const dtStr = dt ? dt.toLocaleDateString("pt-BR") : "—";
       
-      // Adicionamos a chamada da função 'editarRegistro' ao clicar no card, passando o ID e o status atual
       return `
-        <div class="manut-card clickable-card" onclick="editarRegistro('${m.id}', '${m.status || 'Agendada'}')" title="Clique para alterar o status">
+        <div class="manut-card clickable-card" onclick="editarRegistro('${m.id}', '${m.status || 'Agendada'}')">
           <div class="manut-icon" style="background:${color}22; color:${color}">🔧</div>
           <div class="manut-info">
             <div class="manut-veiculo">${m.placa_veiculo || "Veículo"}</div>
             <div class="manut-servico">${m.tipo_servico || "Serviço Geral"}</div>
-          </div>
             <div class="manut-meta">
               <span>📅 ${dtStr}</span>
               ${m.custo ? `<span>💰 R$ ${m.custo.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>` : ""}
@@ -1003,6 +1171,10 @@
 
 // Simulação de banco de dados local
   let manutencoes = []; 
+
+  if ($("frota-search")) {
+  $("frota-search").addEventListener("input", loadMaintenance);
+}
 
 // ─── MANUTENÇÃO INTEGRADA COM FIRESTORE ───────────────────────────────────────
 
@@ -1092,6 +1264,7 @@
             <label>Alterar Status do Serviço</label>
             <select id="edit-manut-status" class="custom-form-input">
               <option value="Agendada" ${statusAtual === 'Agendada' ? 'selected' : ''}>Agendada</option>
+              <option value="Em andamento" ${statusAtual === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
               <option value="Atrasada" ${statusAtual === 'Atrasada' ? 'selected' : ''}>Atrasada</option>
               <option value="Concluída" ${statusAtual === 'Concluída' || statusAtual === 'Concluida' ? 'selected' : ''}>Concluída</option>
             </select>
@@ -1127,16 +1300,16 @@
 
 // Função para mudar o status de uma manutenção ao clicar no card
 async function editarRegistro(docId, statusAtual) {
-  const novoStatus = prompt(`Alterar status da manutenção. Digite uma das opções:\n- Agendada\n- Atrasada\n- Concluída\n\nStatus Atual: ${statusAtual}`);
+  const novoStatus = prompt(`Alterar status da manutenção. Digite uma das opções:\n- Agendada\n- Em andamento\n- Atrasada\n- Concluída\n\nStatus Atual: ${statusAtual}`);
   
   if (!novoStatus) return; // Se cancelar, não faz nada
   
   const statusFormatado = novoStatus.trim();
-  const validos = ["Agendada", "Atrasada", "Concluída", "Concluida"];
+  const validos = ["Agendada", "Em andamento", "Atrasada", "Concluída", "Concluida"];
   
   // Validação simples do que foi digitado
   if (!validos.some(v => v.toLowerCase() === statusFormatado.toLowerCase())) {
-    alert("Status inválido! Digite apenas: Agendada, Atrasada ou Concluída.");
+    alert("Status inválido! Digite apenas: Agendada, Em andamento, Atrasada ou Concluída.");
     return;
   }
 
