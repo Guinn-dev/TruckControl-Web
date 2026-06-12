@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TruckControl — Gerenciador de Frotas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+<body>
+
+<!-- ================================================
+     APP SHELL
+     ================================================ -->
+<div id="app">
+
+  <!-- LOADING SCREEN -->
+  <div id="loading-screen">
+    <div class="loader-inner">
+      <div class="loader-logo">
+        <svg width="56" height="56" viewBox="0 0 48 48" fill="none">
+          <rect width="48" height="48" rx="12" fill="#FF6B00"/>
+          <path d="M8 30 L24 14 L40 30" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="6" y="30" width="36" height="8" rx="4" fill="white"/>
+          <circle cx="14" cy="38" r="4" fill="#FF6B00"/>
+          <circle cx="34" cy="38" r="4" fill="#FF6B00"/>
+        </svg>
+      </div>
+      <div class="loader-title">TruckControl</div>
+      <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       LOGIN PAGE
+       ============================================ -->
+  <div id="page-login" class="page hidden">
+    <div class="login-split">
+      <div class="login-brand">
+        <div class="brand-content">
+          <div class="brand-icon">
+            <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+              <rect width="56" height="56" rx="16" fill="rgba(255,255,255,0.15)"/>
+              <path d="M10 36 L28 16 L46 36" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+              <rect x="8" y="36" width="40" height="9" rx="4.5" fill="white" opacity="0.9"/>
+              <circle cx="18" cy="45" r="5" fill="#FF6B00"/>
+              <circle cx="38" cy="45" r="5" fill="#FF6B00"/>
+            </svg>
+          </div>
+          <h1 class="brand-name">TruckControl</h1>
+          <p class="brand-tagline">Gestão inteligente da sua frota</p>
+          <div class="brand-stats">
+            <div class="brand-stat"><span class="stat-num">100%</span><span class="stat-label">Uptime</span></div>
+            <div class="brand-stat"><span class="stat-num">Real-time</span><span class="stat-label">Firebase sync</span></div>
+            <div class="brand-stat"><span class="stat-num">360°</span><span class="stat-label">Visibilidade</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="login-form-area">
+        <div class="login-card">
+          <h2>Acesse o sistema</h2>
+          <p class="login-subtitle">Entre com suas credenciais para acessar o sistema</p>
+          
+          <div id="login-error" class="alert alert-error hidden"></div>
+          
+          <div class="form-group">
+            <label>Login (E-mail)</label>
+            <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email"/>
+          </div>
+          
+          <div class="form-group">
+            <label>Senha</label>
+            <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"/>
+            <div class="forgot-wrapper">
+              <span class="forgot-link" id="btn-forgot">Esqueci minha senha</span>
+            </div>
+          </div>
+          
+          <button class="btn btn-primary btn-full" id="btn-login">
+            <span>Entrar</span>
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          
+          <div class="login-ui-divider">OU</div>
+          
+          <button class="btn btn-secondary btn-full" id="btn-request-access">
+            Solicite um acesso
+          </button>
+          
+          <p class="login-footer">Ao clicar em entrar, você concorda com nossos <a id="btn-terms">Termos de Serviço</a> e <a id="btn-privacy">Políticas de Privacidade</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       MAIN LAYOUT (after login)
+       ============================================ -->
+  <div id="main-layout" class="hidden">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+      <div class="sidebar-logo">
+        <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
+          <rect width="48" height="48" rx="12" fill="#FF6B00"/>
+          <path d="M8 30 L24 14 L40 30" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="6" y="30" width="36" height="8" rx="4" fill="white"/>
+          <circle cx="14" cy="38" r="4" fill="#FF6B00"/>
+          <circle cx="34" cy="38" r="4" fill="#FF6B00"/>
+        </svg>
+        <span>TruckControl</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-page="home">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="9,22 9,12 15,12 15,22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Dashboard</span>
+        </a>
+        <a href="#" class="nav-item" data-page="data">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2" stroke="currentColor" stroke-width="2"/><path d="M16 8h5l3 3v4h-8V8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/><circle cx="18.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/></svg>
+          <span>Frota</span>
+        </a>
+        <a href="#" class="nav-item" data-page="maintenance">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Manutenção</span>
+        </a>
+        <a href="#" class="nav-item nav-admin hidden" data-page="admin">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Admin</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <a href="#" class="nav-item" data-page="profile">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/></svg>
+          <span>Perfil do usuário</span>
+        </a>
+        <a href="#" class="nav-item nav-logout" id="btn-logout">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="16,17 21,12 16,7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Sair</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- TOPBAR (mobile) -->
+    <header id="topbar">
+      <button id="sidebar-toggle">
+        <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-user">
+        <div class="user-avatar" id="topbar-avatar">U</div>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main id="main-content">
+
+      <!-- ========== HOME / DASHBOARD ========== -->
+      <div id="page-home" class="inner-page">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Dashboard</h1>
+            <p class="page-subtitle">Painel principal</p>
+          </div>
+          <div class="header-date" id="home-date"></div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card kpi-orange">
+            <div class="kpi-icon">
+              <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2" stroke="currentColor" stroke-width="2"/><path d="M16 8h5l3 3v4h-8V8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/><circle cx="18.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/></svg>
+            </div>
+            <div class="kpi-info">
+              <div class="kpi-value" id="kpi-caminhoes">—</div>
+                  <div class="kpi-label">Caminhões</div>
+            </div>
+          </div>
+          <div class="kpi-card kpi-blue">
+            <div class="kpi-icon">
+              <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="kpi-info">
+              <div class="kpi-value" id="kpi-carretas">—</div>
+              <div class="kpi-label">Carretas</div>
+            </div>
+          </div>
+          <div class="kpi-card kpi-yellow">
+            <div class="kpi-icon">
+              <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="kpi-info">
+              <div class="kpi-value" id="kpi-manutencoes">—</div>
+              <div class="kpi-label">Manutenções</div>
+            </div>
+          </div>
+          <div class="kpi-card kpi-green">
+            <div class="kpi-icon">
+              <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="kpi-info">
+              <div class="kpi-value" id="kpi-usuarios">—</div>
+              <div class="kpi-label">Usuários</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="charts-row">
+          <div class="chart-card chart-wide">
+            <div class="chart-header">
+              <h3>Entregas por dia (últimos 30 dias)</h3>
+            </div>
+            <div class="chart-body">
+              <canvas id="chart-entregas" height="220"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Manutenções por status</h3>
+            </div>
+            <div class="chart-body chart-donut-wrap">
+              <canvas id="chart-manut-status" height="200"></canvas>
+              <div class="donut-legend" id="donut-legend"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Updates -->
+        <div class="section-card">
+          <div class="section-card-header">
+            <h3>Atualizações recentes</h3>
+          </div>
+          <div id="recent-updates" class="updates-list">
+            <div class="empty-state">Carregando...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== FROTA (DATA) ========== -->
+      <div id="page-data" class="inner-page hidden">
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h1 class="page-title">Base de Dados</h1>
+            <p class="page-subtitle">Caminhões e carretas cadastrados</p>
+          </div>
+    <!-- O botão deve ficar aqui, após o fechamento da div de texto -->
+          <button class="btn-primary-action" id="btn-add-veiculo">
+            <span class="icon-plus">+</span>
+              Adicionar
+          </button>
+        </div>
+
+        <div class="tabs-bar">
+          <button class="tab-btn active" data-tab="caminhoes">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2" stroke="currentColor" stroke-width="2"/><path d="M16 8h5l3 3v4h-8V8Z" stroke="currentColor" stroke-width="2"/><circle cx="5.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/><circle cx="18.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/></svg>
+            Caminhões
+          </button>
+          <button class="tab-btn" data-tab="carretas">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="12" rx="2" stroke="currentColor" stroke-width="2"/><circle cx="7" cy="19" r="2" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="19" r="2" stroke="currentColor" stroke-width="2"/></svg>
+            Carretas
+          </button>
+        </div>
+
+        <div class="search-bar-wrap">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input type="text" id="frota-search" placeholder="Pesquisar por placa ou modelo..." />
+        </div>
+
+        <div id="frota-list" class="vehicle-grid">
+          <div class="empty-state">Carregando...</div>
+        </div>
+      </div>
+
+      <!-- ========== VEHICLE DETAIL ========== -->
+      <div id="page-detail" class="inner-page hidden">
+        <div class="page-header detail-page-header">
+          <button class="btn-back" id="btn-back-detail">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Voltar
+          </button>
+          <div class="detail-header-actions hidden btn-admin-only" id="detail-actions">
+            <button class="btn-detail-edit" id="btn-detail-edit">
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Editar
+            </button>
+            <button class="btn-detail-delete" id="btn-detail-delete">
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Excluir
+            </button>
+          </div>
+        </div>
+        <div id="detail-content">
+          <div class="empty-state">Carregando...</div>
+        </div>
+      </div>
+
+      <!-- ========== MAINTENANCE ========== -->
+      <div id="page-maintenance" class="inner-page hidden">
+        <div class="page-header">
+          <div>
+          <h1 class="page-title">Agendamento de Manutenções</h1>
+          <p class="page-subtitle">Histórico e agendamentos</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-primary" onclick="abrirModalManutencao('adicionar')">
+            <i class="fas fa-plus"></i> + Adicionar
+          </button>
+        </div>
+      </div>
+
+        <div class="manut-summary" id="manut-summary">
+          <div class="manut-stat stat-orange">
+            <div class="ms-num" id="ms-agendadas">—</div>
+            <div class="ms-label">Agendadas</div>
+          </div>
+          <div class="manut-stat stat-yellow">
+            <div class="ms-num" id="ms-andamento">—</div>
+            <div class="ms-label">Em andamento</div>
+          </div>
+          <div class="manut-stat stat-red">
+            <div class="ms-num" id="ms-atrasadas">—</div>
+            <div class="ms-label">Atrasadas</div>
+          </div>
+          <div class="manut-stat stat-green">
+            <div class="ms-num" id="ms-concluidas">—</div>
+            <div class="ms-label">Concluídas</div>
+          </div>
+        </div>
+
+        <div class="search-bar-wrap">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input type="text" id="frota-search" placeholder="Pesquisar por placa ou modelo..." />
+        </div>
+
+        <div id="manut-list" class="manut-grid">
+          <div class="empty-state">Carregando...</div>
+        </div>
+      </div>
+
+      <!-- ========== PROFILE ========== -->
+      <div id="page-profile" class="inner-page hidden">
+        <div class="page-header">
+          <h1 class="page-title">Meu Perfil</h1>
+        </div>
+        <div class="profile-layout">
+          <div class="profile-hero">
+            <div class="profile-avatar-big" id="profile-avatar-big">U</div>
+            <div class="profile-name" id="profile-name">—</div>
+            <div class="profile-role" id="profile-role">—</div>
+          </div>
+          <div class="profile-cards">
+            <div class="section-card">
+              <div class="section-card-header"><h3>Informações</h3></div>
+              <div class="info-rows" id="profile-info-rows">
+                <div class="empty-state">Carregando...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== ADMIN ========== -->
+      <div id="page-admin" class="inner-page hidden">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Painel Admin</h1>
+            <p class="page-subtitle">Gerenciamento do sistema</p>
+          </div>
+        </div>
+        <div class="tabs-bar">
+          <button class="tab-btn active" data-admin-tab="caminhoes">Caminhões</button>
+          <button class="tab-btn" data-admin-tab="carretas">Carretas</button>
+          <button class="tab-btn" data-admin-tab="usuarios">Usuários</button>
+          <button class="tab-btn" data-admin-tab="sistema">Sistema</button>
+        </div>
+        <div id="admin-tab-content">
+          <div class="admin-list" id="admin-list">
+            <div class="empty-state">Carregando...</div>
+          </div>
+          <button class="btn btn-primary fab" id="admin-fab">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+    </main><!-- /main-content -->
+  </div><!-- /main-layout -->
+
+  <!-- ================================================
+       MODAL — REGISTER FROTA / CARRETA / USER
+       ================================================ -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal" id="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-title">Registrar</h3>
+        <button class="modal-close" id="modal-close">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Dynamic content injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast hidden"></div>
+
+</div><!-- /app -->
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, collection, getDocs, getDoc, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // ─── Firebase Config ──────────────────────────────────────────────────────
+  const firebaseConfig = {
+    apiKey: "AIzaSyA0yd_OrQBtn5keeBoR64_MAtLezGhbOlQ",
+    authDomain: "frota-39c83.firebaseapp.com",
+    databaseURL: "https://frota-39c83-default-rtdb.firebaseio.com",
+    projectId: "frota-39c83",
+    storageBucket: "frota-39c83.firebasestorage.app",
+    messagingSenderId: "564253835431",
+    appId: "1:564253835431:web:2452a98863e1e0e5dd1b82",
+    measurementId: "G-XGQ2K19YXP"
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const googleProvider = new GoogleAuthProvider();
+
+  // ─── State ────────────────────────────────────────────────────────────────
+  let currentUser = null;
+  let currentUserData = null;
+  let currentPage = "home";
+  let currentTab = "caminhoes";
+  let currentAdminTab = "caminhoes";
+  let frotas = [];
+  let carretas = [];
+  let listeners = [];
+
+  // ─── DOM Helpers ─────────────────────────────────────────────────────────
+  const $ = id => document.getElementById(id);
+  const show = el => el && el.classList.remove("hidden");
+  const hide = el => el && el.classList.add("hidden");
+
+  function showToast(msg, type = "success") {
+    const t = $("toast");
+    t.textContent = msg;
+    t.className = "toast " + type;
+    setTimeout(() => t.classList.add("hidden"), 3500);
+  }
+
+  function setLoading(btn, loading) {
+    if (!btn) return;
+    btn.disabled = loading;
+    btn.style.opacity = loading ? "0.6" : "1";
+  }
+
+  // ─── Loading Screen ───────────────────────────────────────────────────────
+  setTimeout(() => hide($("loading-screen")), 1200);
+
+  // ─── Auth Observer ────────────────────────────────────────────────────────
+  onAuthStateChanged(auth, async user => {
+    if (user) {
+      currentUser = user;
+      const snap = await getDoc(doc(db, "usuarios", user.uid));
+      currentUserData = snap.exists() ? snap.data() : { nome: user.displayName || "Usuário", tipo: "motorista" };
+      initApp();
+    } else {
+      currentUser = null;
+      currentUserData = null;
+      showLoginPage();
+    }
+  });
+
+  // ─── INTERAÇÕES COMPLEMENTARES DE LOGIN (ESQUECI SENHA & SOLICITAR ACESSO) ───
+
+  // 1. Modal: Esqueci Minha Senha (Idêntico ao padrão visual do sistema)
+  if ($("btn-forgot")) {
+    $("btn-forgot").addEventListener("click", () => {
+      const backdrop = document.createElement("div");
+      backdrop.className = "custom-modal-backdrop";
+      backdrop.id = "modal-forgot-pass";
+
+      backdrop.innerHTML = `
+        <div class="custom-modal-box">
+          <div class="custom-modal-header">
+            <div class="custom-modal-title">🔑 Recuperação de Acesso</div>
+            <button class="custom-modal-close" onclick="document.getElementById('modal-forgot-pass').remove()">&times;</button>
+          </div>
+          <div class="custom-modal-body">
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 18px; line-height: 1.5;">
+              Insira o seu e-mail cadastrado na plataforma para receber as instruções e o link de redefinição de senha.
+            </p>
+            <div class="custom-form-group">
+              <label>E-mail Institucional</label>
+              <input type="email" id="forgot-email-input" class="custom-form-input" placeholder="seu@email.com">
+            </div>
+          </div>
+          <div class="custom-modal-footer">
+            <button class="btn btn-secondary" style="padding: 8px 16px;" onclick="document.getElementById('modal-forgot-pass').remove()">Cancelar</button>
+            <button class="btn btn-primary" style="padding: 8px 16px;" id="btn-submit-forgot">Enviar Link</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(backdrop);
+
+      document.getElementById("btn-submit-forgot").onclick = async () => {
+        const email = document.getElementById("forgot-email-input").value.trim();
+        if (!email) { alert("Por favor, introduza o seu e-mail."); return; }
+        
+        try {
+          // Caso queira integrar com Firebase Auth no futuro, descomente a linha abaixo:
+          // await sendPasswordResetEmail(auth, email);
+          
+          showToast("Link de recuperação enviado para: " + email);
+          backdrop.remove();
+        } catch (err) {
+          showToast("Erro ao processar requisição: " + err.message, "error");
+        }
+      };
+    });
+  }
+
+  // 2. Modal: Solicitar Novo Acesso
+  if ($("btn-request-access")) {
+    $("btn-request-access").addEventListener("click", () => {
+      const backdrop = document.createElement("div");
+      backdrop.className = "custom-modal-backdrop";
+      backdrop.id = "modal-request-access";
+
+      backdrop.innerHTML = `
+        <div class="custom-modal-box">
+          <div class="custom-modal-header">
+            <div class="custom-modal-title">📋 Solicitar Novo Acesso</div>
+            <button class="custom-modal-close" onclick="document.getElementById('modal-request-access').remove()">&times;</button>
+          </div>
+          <div class="custom-modal-body">
+            <div class="custom-form-group">
+              <label>Nome Completo</label>
+              <input type="text" id="req-nome" class="custom-form-input" placeholder="Ex: Guilherme Silva">
+            </div>
+            <div class="custom-form-group">
+              <label>E-mail Corporativo</label>
+              <input type="email" id="req-email" class="custom-form-input" placeholder="seu@email.com">
+            </div>
+            <div class="custom-form-group">
+              <label>Departamento / Filial</label>
+              <input type="text" id="req-filial" class="custom-form-input" placeholder="Ex: Logística - SP">
+            </div>
+          </div>
+          <div class="custom-modal-footer">
+            <button class="btn btn-secondary" style="padding: 8px 16px;" onclick="document.getElementById('modal-request-access').remove()">Cancelar</button>
+            <button class="btn btn-primary" style="padding: 8px 16px;" id="btn-submit-request">Enviar Solicitação</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(backdrop);
+
+      document.getElementById("btn-submit-request").onclick = async () => {
+        const nome = document.getElementById("req-nome").value.trim();
+        const email = document.getElementById("req-email").value.trim();
+        const filial = document.getElementById("req-filial").value.trim();
+
+        if (!nome || !email || !filial) { alert("Por favor, preencha todos os campos."); return; }
+
+        try {
+          await addDoc(collection(db, "solicitacoes_acesso"), {
+            nome,
+            email,
+            filial,
+            status: "Pendente",
+            data_solicitacao: new Date()
+          });
+
+          showToast("Solicitação enviada com sucesso! Aguarde aprovação.");
+          backdrop.remove();
+        } catch (err) {
+          showToast("Erro ao salvar dados: " + err.message, "error");
+        }
+      };
+    });
+  }
+  // ─── LOGIN ────────────────────────────────────────────────────────────────
+  function showLoginPage() {
+    hide($("main-layout"));
+    show($("page-login"));
+  }
+
+  $("btn-login").addEventListener("click", async () => {
+    const email = $("login-email").value.trim();
+    const pass = $("login-password").value.trim();
+    if (!email || !pass) { showLoginError("Preencha e-mail e senha."); return; }
+    $("btn-login").disabled = true; $("btn-login").style.opacity = "0.6";
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+    } catch (e) {
+      showLoginError(getAuthError(e.code));
+      $("btn-login").disabled = false; $("btn-login").style.opacity = "1";
+    }
+  });
+
+  $("login-password").addEventListener("keydown", e => { if (e.key === "Enter") $("btn-login").click(); });
+
+  function showLoginError(msg) {
+    const el = $("login-error"); el.textContent = msg; show(el);
+    setTimeout(() => hide(el), 4000);
+  }
+  function getAuthError(code) {
+    const m = {
+      "auth/user-not-found": "Usuário não encontrado.",
+      "auth/wrong-password": "Senha incorreta.",
+      "auth/invalid-email": "E-mail inválido.",
+      "auth/too-many-requests": "Muitas tentativas. Tente mais tarde.",
+      "auth/invalid-credential": "Credenciais inválidas.",
+    };
+    return m[code] || "Erro ao entrar. Tente novamente.";
+  }
+
+  // Forgot password
+  $("btn-forgot").addEventListener("click", () => {
+    const email = $("login-email").value.trim();
+    if (!email) { showLoginError("Digite seu e-mail acima para recuperar a senha."); return; }
+    openModal("reset-password", null, email);
+  });
+
+  // Terms
+  $("btn-terms").addEventListener("click", () => openModal("terms"));
+  $("btn-privacy").addEventListener("click", () => openModal("terms"));
+
+  // Request access
+  $("btn-request-access").addEventListener("click", () => {
+    showLoginError("Entre em contato com o administrador: admin@jdc.com.br");
+  });
+
+  // ─── LOGOUT ───────────────────────────────────────────────────────────────
+  $("btn-logout").addEventListener("click", async () => {
+    if (!confirm("Tem certeza que deseja sair?")) return;
+    listeners.forEach(u => u());
+    listeners = [];
+    await signOut(auth);
+  });
+
+  // ─── INIT APP ─────────────────────────────────────────────────────────────
+  function initApp() {
+    hide($("page-login"));
+    show($("main-layout"));
+    
+    // Show admin nav if admin
+    if (currentUserData?.tipo === "admin") {
+      document.querySelectorAll(".nav-admin").forEach(el => show(el));
+      document.querySelectorAll(".btn-admin-only").forEach(el => show(el));
+    }
+
+    // Date
+    $("home-date").textContent = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
+
+    navigate("home");
+    bindNav();
+  }
+
+  // ─── NAVIGATION ───────────────────────────────────────────────────────────
+  function bindNav() {
+    document.querySelectorAll(".nav-item[data-page]").forEach(item => {
+      item.addEventListener("click", e => {
+        e.preventDefault();
+        navigate(item.dataset.page);
+      });
+    });
+    $("sidebar-toggle").addEventListener("click", () => {
+      $("sidebar").classList.toggle("open");
+    });
+  }
+
+  function navigate(page, extra = null) {
+    // Hide all inner pages
+    document.querySelectorAll(".inner-page").forEach(p => hide(p));
+    // Update active nav
+    document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("active"));
+    document.querySelector(`.nav-item[data-page="${page}"]`)?.classList.add("active");
+
+    currentPage = page;
+    const titleMap = { home: "Dashboard", data: "Frota", maintenance: "Manutenção", profile: "Perfil", admin: "Admin", detail: "Detalhes" };
+    $("topbar-title").textContent = titleMap[page] || page;
+    $("sidebar").classList.remove("open");
+
+    if (page === "home") { show($("page-home")); loadHome(); }
+    else if (page === "data") { show($("page-data")); loadFrota(); bindFrotaTabs(); }
+    else if (page === "maintenance") { show($("page-maintenance")); loadMaintenance(); }
+    else if (page === "profile") { show($("page-profile")); loadProfile(); }
+    else if (page === "admin") { show($("page-admin")); loadAdmin(); bindAdminTabs(); }
+    else if (page === "detail") { show($("page-detail")); loadDetail(extra); }
+  }
+
+  // ─── HOME / DASHBOARD ─────────────────────────────────────────────────────
+  async function loadHome() {
+    // KPIs
+    const [c, ca, m, u] = await Promise.all([
+      getDocs(collection(db, "caminhoes")),
+      getDocs(collection(db, "carretas")),
+      getDocs(collection(db, "manutencoes")),
+      getDocs(collection(db, "usuarios")),
+    ]);
+    $("kpi-caminhoes").textContent = c.size;
+    $("kpi-carretas").textContent = ca.size;
+    $("kpi-manutencoes").textContent = m.size;
+    $("kpi-usuarios").textContent = u.size;
+
+    drawEntregasChart();
+    drawManutStatusChart(m);
+    loadRecentUpdates(c, ca);
+  }
+
+  async function loadRecentUpdates(cSnap, caSnap) {
+    const updates = [];
+    cSnap.forEach(d => {
+      const data = d.data();
+      if (data.last_updated_at) updates.push({ label: `Caminhão ${data.placa}`, by: data.last_updated_by_name, at: data.last_updated_at.toDate?.() });
+    });
+    caSnap.forEach(d => {
+      const data = d.data();
+      if (data.last_updated_at) updates.push({ label: `Carreta ${data.placa}`, by: data.last_updated_by_name, at: data.last_updated_at.toDate?.() });
+    });
+    updates.sort((a, b) => (b.at || 0) - (a.at || 0));
+    const container = $("recent-updates");
+    if (!updates.length) { container.innerHTML = '<div class="empty-state">Sem atualizações recentes.</div>'; return; }
+    container.innerHTML = updates.slice(0, 8).map(u => `
+      <div class="update-row">
+        <div class="update-icon">🚚</div>
+        <div class="update-info">
+          <div class="update-label">${u.label}</div>
+          <div class="update-by">por ${u.by || "Sistema"} · ${u.at ? u.at.toLocaleDateString("pt-BR") : "—"}</div>
+        </div>
+      </div>`).join("");
+  }
+
+  async function drawEntregasChart() {
+    const snap = await getDocs(query(collection(db, "entregas"), orderBy("data", "desc")));
+    const countByDay = {};
+    const today = new Date();
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(today); d.setDate(d.getDate() - i);
+      countByDay[d.toDateString()] = 0;
+    }
+    snap.forEach(doc => {
+      const dt = doc.data().data?.toDate?.();
+      if (dt) { const k = dt.toDateString(); if (k in countByDay) countByDay[k]++; }
+    });
+    const labels = Object.keys(countByDay).map(k => { const d = new Date(k); return `${d.getDate()}/${d.getMonth() + 1}`; });
+    const values = Object.values(countByDay);
+    drawLineChart($("chart-entregas"), labels, values);
+  }
+
+  function drawLineChart(canvas, labels, values) {
+    const ctx = canvas.getContext("2d");
+    const w = canvas.offsetWidth || 600; const h = 200;
+    canvas.width = w; canvas.height = h;
+    const pad = { t: 20, r: 20, b: 35, l: 35 };
+    const cw = w - pad.l - pad.r, ch = h - pad.t - pad.b;
+    ctx.clearRect(0, 0, w, h);
+    const max = Math.max(...values, 1);
+    const step = cw / (labels.length - 1);
+    // Grid
+    ctx.strokeStyle = "rgba(0,0,0,0.06)"; ctx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+      const y = pad.t + ch - (i / 4) * ch;
+      ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke();
+    }
+    // Area fill
+    const grad = ctx.createLinearGradient(0, pad.t, 0, pad.t + ch);
+    grad.addColorStop(0, "rgba(255,107,0,0.3)"); grad.addColorStop(1, "rgba(255,107,0,0)");
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    values.forEach((v, i) => {
+      const x = pad.l + i * step, y = pad.t + ch - (v / max) * ch;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.lineTo(pad.l + (labels.length - 1) * step, pad.t + ch);
+    ctx.lineTo(pad.l, pad.t + ch);
+    ctx.closePath(); ctx.fill();
+    // Line
+    ctx.strokeStyle = "#FF6B00"; ctx.lineWidth = 2.5;
+    ctx.lineJoin = "round"; ctx.lineCap = "round";
+    ctx.beginPath();
+    values.forEach((v, i) => {
+      const x = pad.l + i * step, y = pad.t + ch - (v / max) * ch;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    // Labels (every 5)
+    ctx.fillStyle = "#888"; ctx.font = "11px DM Sans, sans-serif"; ctx.textAlign = "center";
+    labels.forEach((l, i) => { if (i % 5 === 0) { const x = pad.l + i * step; ctx.fillText(l, x, h - 8); } });
+  }
+
+  function drawManutStatusChart(snap) {
+    const counts = { "Agendada": 0,"Em andamento": 0,  "Atrasada": 0, "Concluída": 0 };
+    snap.forEach(d => { const s = d.data().status || "Agendada"; if (s in counts) counts[s]++; });
+    const total = Object.values(counts).reduce((a, b) => a + b, 0) || 1;
+    const colors = { "Agendada": "#FF6B00", "Em andamento": "#9008ea", "Atrasada": "#EF4444", "Concluída": "#22C55E" };
+    const canvas = $("chart-manut-status");
+    const ctx = canvas.getContext("2d");
+    const size = 180; canvas.width = size; canvas.height = size;
+    let start = -Math.PI / 2;
+    Object.entries(counts).forEach(([label, count]) => {
+      const angle = (count / total) * 2 * Math.PI;
+      ctx.fillStyle = colors[label];
+      ctx.beginPath();
+      ctx.moveTo(size / 2, size / 2);
+      ctx.arc(size / 2, size / 2, size / 2 - 4, start, start + angle);
+      ctx.closePath(); ctx.fill();
+      start += angle;
+    });
+    // Donut hole
+    ctx.fillStyle = "#fff";
+    ctx.beginPath(); ctx.arc(size / 2, size / 2, 55, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = "#1a1a1a"; ctx.font = "bold 22px Syne"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(total, size / 2, size / 2 - 6);
+    ctx.fillStyle = "#888"; ctx.font = "11px DM Sans"; ctx.fillText("total", size / 2, size / 2 + 16);
+    // Legend
+    $("donut-legend").innerHTML = Object.entries(counts).map(([k, v]) =>
+      `<div class="legend-item"><span class="legend-dot" style="background:${colors[k]}"></span><span>${k} (${v})</span></div>`
+    ).join("");
+  }
+
+  // ─── FROTA ────────────────────────────────────────────────────────────────
+  function bindFrotaTabs() {
+    document.querySelectorAll("[data-tab]").forEach(btn => {
+      btn.cloneNode(true); // Limpa listeners antigos se houver re-execução
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("[data-tab]").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentTab = btn.dataset.tab; // Armazena "caminhoes" ou "carretas"
+        renderFrota();
+      });
+    });
+
+    $("frota-search").addEventListener("input", renderFrota);
+    
+    // CORREÇÃO: O botão adicionar agora captura dinamicamente o estado correto
+    $("btn-add-veiculo").onclick = () => {
+      // Se a aba atual for "caminhoes", abre o form de "frota". Se for "carretas", abre "carreta".
+      const type = currentTab === "caminhoes" ? "frota" : "carreta";
+      openModal(type);
+    };
+  }
+
+  async function loadFrota() {
+    const [fSnap, cSnap] = await Promise.all([
+      getDocs(collection(db, "caminhoes")),
+      getDocs(collection(db, "carretas")),
+    ]);
+    frotas = []; fSnap.forEach(d => frotas.push({ id: d.id, ...d.data() }));
+    carretas = []; cSnap.forEach(d => carretas.push({ id: d.id, ...d.data() }));
+    renderFrota();
+  }
+
+  function renderFrota() {
+      const queryStr = $("frota-search").value.toLowerCase();
+      const list = currentTab === "caminhoes" ? frotas : carretas;
+      const filtered = list.filter(v =>
+        (v.placa || "").toLowerCase().includes(queryStr) ||
+        (v.modelo || "").toLowerCase().includes(queryStr)
+      );
+      const container = $("frota-list");
+      if (!filtered.length) { container.innerHTML = '<div class="empty-state">Nenhum veículo encontrado.</div>'; return; }
+    
+      container.innerHTML = filtered.map(v => `
+        <div class="vehicle-card clickable-card" data-placa="${v.placa}" data-tipo="${currentTab}" data-docid="${v.id}" title="Clique para ver detalhes">
+          <div class="vehicle-icon">
+            ${currentTab === "caminhoes" ?
+              `<svg width="32" height="32" fill="none" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2" stroke="#FF6B00" stroke-width="2"/><path d="M16 8h5l3 3v4h-8V8Z" stroke="#FF6B00" stroke-width="2"/><circle cx="5.5" cy="18.5" r="2.5" stroke="#FF6B00" stroke-width="2"/><circle cx="18.5" cy="18.5" r="2.5" stroke="#FF6B00" stroke-width="2"/></svg>` :
+              `<svg width="32" height="32" fill="none" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="12" rx="2" stroke="#3B82F6" stroke-width="2"/><circle cx="7" cy="19" r="2" stroke="#3B82F6" stroke-width="2"/><circle cx="17" cy="19" r="2" stroke="#3B82F6" stroke-width="2"/></svg>`
+            }
+          </div>
+          <div class="vehicle-info">
+            <div class="vehicle-placa">${v.placa || "—"}</div>
+            <div class="vehicle-modelo">${v.modelo || "—"} · ${v.ano_modelo || v.ano_fabricacao || "—"}</div>
+            ${v.filial ? `<div class="vehicle-badge">${v.filial}</div>` : ""}
+          </div>
+          <div class="vehicle-actions">
+            ${true ? `
+              <button class="btn-card-action btn-card-edit" data-docid="${v.id}" data-type="${currentTab}" title="Editar">
+                <svg width="15" height="15" fill="none" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Editar</span>
+              </button>
+              <button class="btn-card-action btn-card-delete" data-docid="${v.id}" data-col="${currentTab === 'caminhoes' ? 'caminhoes' : 'carretas'}" title="Excluir">
+                <svg width="15" height="15" fill="none" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Excluir</span>
+              </button>
+            ` : ""}
+          </div>
+        </div>`).join("");
+
+      // Clique no card para ver Detalhes
+      container.querySelectorAll(".clickable-card").forEach(card => {
+        card.addEventListener("click", (e) => {
+          const editButton = e.target.closest ? e.target.closest('.btn-card-edit') : null;
+          const deleteButton = e.target.closest ? e.target.closest('.btn-card-delete') : null;
+          if (editButton || deleteButton) return;
+          navigate("detail", { placa: card.dataset.placa, tipo: card.dataset.tipo });
+        });
+      });
+
+      // FUNÇÃO EDITAR: Direto da aba principal da frota
+      container.querySelectorAll(".btn-card-edit").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation(); 
+          const modalType = btn.dataset.type === "caminhoes" ? "frota" : "carreta";
+          openModal(modalType, btn.dataset.docid);
+        });
+      });
+
+      // FUNÇÃO EXCLUIR: Deleta do Firestore e atualiza a interface local
+      container.querySelectorAll(".btn-card-delete").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          if (!confirm("Tem certeza que deseja remover este veículo de forma permanente?")) return;
+          
+          const collectionName = btn.dataset.col;
+          const docId = btn.dataset.docid;
+          
+          try {
+            await deleteDoc(doc(db, collectionName, docId));
+            showToast("Veículo removido com sucesso!");
+            loadFrota(); 
+          } catch (err) {
+            showToast("Erro ao excluir: " + err.message, "error");
+          }
+        });
+      });
+  }
+
+  // ─── VEHICLE DETAIL ───────────────────────────────────────────────────────
+  async function loadDetail(extra) {
+    // extra can be { placa, tipo } or legacy string (placa only → caminhao)
+    const placa = typeof extra === "string" ? extra : extra?.placa;
+    const tipo  = typeof extra === "string" ? "caminhoes" : (extra?.tipo || "caminhoes");
+
+    $("detail-content").innerHTML = '<div class="empty-state">Carregando...</div>';
+    $("btn-back-detail").onclick = () => navigate("data");
+
+    // Hide/show admin actions
+    const actionsEl = $("detail-actions");
+    if (currentUserData?.tipo === "admin") {
+      actionsEl.classList.remove("hidden");
+    } else {
+      actionsEl.classList.add("hidden");
+    }
+
+    const snap = await getDocs(query(collection(db, tipo), where("placa", "==", placa)));
+    if (snap.empty) { $("detail-content").innerHTML = '<div class="empty-state">Veículo não encontrado.</div>'; return; }
+
+    const docRef = snap.docs[0];
+    const v = docRef.data();
+    const docId = docRef.id;
+    const modalType = tipo === "caminhoes" ? "frota" : "carreta";
+
+    // Wire detail action buttons
+    $("btn-detail-edit").onclick = () => openModal(modalType, docId);
+    $("btn-detail-delete").onclick = async () => {
+      if (!confirm(`Tem certeza que deseja excluir ${v.placa} permanentemente?`)) return;
+      try {
+        await deleteDoc(doc(db, tipo, docId));
+        showToast("Veículo excluído com sucesso!");
+        navigate("data");
+      } catch (err) {
+        showToast("Erro ao excluir: " + err.message, "error");
+      }
+    };
+
+    if (tipo === "caminhoes") {
+      // ── CAMINHÃO DETAIL ────────────────────────────────────────────
+      const compSnap = await getDocs(query(collection(db, "composicoes"), where("id_cavalo", "==", placa)));
+      const comp = compSnap.empty ? null : compSnap.docs[0].data();
+
+      $("detail-content").innerHTML = `
+        <div class="detail-hero detail-hero-truck">
+          <div class="detail-vehicle-badge detail-badge-truck">
+            <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2" stroke="currentColor" stroke-width="2.5"/><path d="M16 8h5l3 3v4h-8V8Z" stroke="currentColor" stroke-width="2.5"/><circle cx="5.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/><circle cx="18.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/></svg>
+            Caminhão
+          </div>
+          <div class="detail-title">${v.placa}</div>
+          <div class="detail-subtitle">${v.modelo || "—"} · ${v.marca || "—"}</div>
+          <div class="detail-status-badge status-${(v.status || "ativo").toLowerCase()}">${v.status || "Ativo"}</div>
+        </div>
+        <div class="detail-grid">
+          <div class="section-card">
+            <div class="section-card-header"><h3>Dados Técnicos</h3></div>
+            <div class="info-rows">
+              ${infoRow("Placa", v.placa)}
+              ${infoRow("Marca", v.marca)}
+              ${infoRow("Modelo", v.modelo)}
+              ${infoRow("Ano Modelo", v.ano_modelo)}
+              ${infoRow("Cor", v.cor)}
+              ${infoRow("Chassi", v.chassi)}
+              ${infoRow("RENAVAM", v.renavam)}
+            </div>
+          </div>
+          <div class="section-card">
+            <div class="section-card-header"><h3>Operação</h3></div>
+            <div class="info-rows">
+              ${infoRow("Filial", v.filial)}
+              ${infoRow("Tecnologia", v.tecnologia)}
+              ${infoRow("Operação", v.operacao)}
+              ${infoRow("Atualizado por", v.last_updated_by_name)}
+            </div>
+          </div>
+          <div class="section-card detail-comp">
+            <div class="section-card-header"><h3>Composição (Carretas)</h3></div>
+            <div class="comp-slots">
+              <div class="comp-slot ${comp?.id_carreta1 ? 'comp-slot-occupied' : ''}">
+                <div class="comp-slot-label">Carreta 1</div>
+                <div class="comp-slot-value">${comp?.id_carreta1 || "Disponível"}</div>
+              </div>
+              <div class="comp-slot ${comp?.id_carreta2 ? 'comp-slot-occupied' : ''}">
+                <div class="comp-slot-label">Carreta 2</div>
+                <div class="comp-slot-value">${comp?.id_carreta2 || "Disponível"}</div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+
+    } else {
+      // ── CARRETA DETAIL ─────────────────────────────────────────────
+      // Find current composition (which truck is pulling this trailer)
+      const compSnap = await getDocs(query(collection(db, "composicoes"),
+        where("id_carreta1", "==", placa)));
+      const compSnap2 = await getDocs(query(collection(db, "composicoes"),
+        where("id_carreta2", "==", placa)));
+      const comp = !compSnap.empty ? compSnap.docs[0].data()
+                 : !compSnap2.empty ? compSnap2.docs[0].data()
+                 : null;
+
+      $("detail-content").innerHTML = `
+        <div class="detail-hero detail-hero-carreta">
+          <div class="detail-vehicle-badge detail-badge-carreta">
+            <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="12" rx="2" stroke="currentColor" stroke-width="2.5"/><circle cx="7" cy="19" r="2" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="19" r="2" stroke="currentColor" stroke-width="2"/></svg>
+            Carreta
+          </div>
+          <div class="detail-title">${v.placa}</div>
+          <div class="detail-subtitle">${v.modelo || "—"} · ${v.marca || "—"}</div>
+          <div class="detail-status-badge ${comp ? 'status-em-uso' : 'status-disponivel'}">${comp ? "Em Uso" : "Disponível"}</div>
+        </div>
+        <div class="detail-grid">
+          <div class="section-card">
+            <div class="section-card-header"><h3>Dados Técnicos</h3></div>
+            <div class="info-rows">
+              ${infoRow("Placa", v.placa)}
+              ${infoRow("Marca", v.marca)}
+              ${infoRow("Modelo", v.modelo)}
+              ${infoRow("Ano Fabricação", v.ano_fabricacao)}
+              ${infoRow("Ano Modelo", v.ano_modelo)}
+              ${infoRow("Cor", v.cor)}
+              ${infoRow("Chassi", v.chassi)}
+              ${infoRow("RENAVAM", v.renavam)}
+            </div>
+          </div>
+          <div class="section-card">
+            <div class="section-card-header"><h3>Capacidade & Operação</h3></div>
+            <div class="info-rows">
+              ${infoRow("Capacidade (t)", v.capacidade)}
+              ${infoRow("Cavalo Atual", comp ? comp.id_cavalo : "Sem cavalo")}
+              ${infoRow("Posição na Composição", !comp ? "—" : comp.id_carreta1 === placa ? "Carreta 1" : "Carreta 2")}
+              ${infoRow("Atualizado por", v.last_updated_by_name)}
+            </div>
+          </div>
+          <div class="section-card detail-comp">
+            <div class="section-card-header"><h3>Composição Atual</h3></div>
+            <div class="comp-slots">
+              ${comp ? `
+                <div class="comp-slot comp-slot-occupied">
+                  <div class="comp-slot-label">Cavalo</div>
+                  <div class="comp-slot-value">${comp.id_cavalo || "—"}</div>
+                </div>
+                <div class="comp-slot ${comp.id_carreta1 === placa ? 'comp-slot-this' : (comp.id_carreta1 ? 'comp-slot-occupied' : '')}">
+                  <div class="comp-slot-label">Carreta 1</div>
+                  <div class="comp-slot-value">${comp.id_carreta1 || "Disponível"}</div>
+                </div>
+                <div class="comp-slot ${comp.id_carreta2 === placa ? 'comp-slot-this' : (comp.id_carreta2 ? 'comp-slot-occupied' : '')}">
+                  <div class="comp-slot-label">Carreta 2</div>
+                  <div class="comp-slot-value">${comp.id_carreta2 || "Disponível"}</div>
+                </div>
+              ` : `
+                <div class="comp-slot-empty">
+                  <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  <p>Esta carreta não está associada a nenhuma composição no momento.</p>
+                </div>
+              `}
+            </div>
+          </div>
+        </div>`;
+    }
+  }
+
+  function infoRow(label, val) {
+    return `<div class="info-row"><span class="ir-label">${label}</span><span class="ir-value">${val || "—"}</span></div>`;
+  }
+
+  // ─── MAINTENANCE ──────────────────────────────────────────────────────────
+  let cacheManutencoes = []; // Cache para busca instantânea
+
+  async function loadMaintenance() {
+    const snap = await getDocs(query(collection(db, "manutencoes"), orderBy("data", "desc")));
+    cacheManutencoes = [];
+    let ag = 0, and = 0, at = 0, co = 0;
+    
+    snap.forEach(d => {
+      const data = { id: d.id, ...d.data() };
+      cacheManutencoes.push(data);
+      
+      const s = (data.status || "").toLowerCase();
+      if (s === "agendada") ag++;
+      else if (s === "em andamento" || s === "andamento") and++;
+      else if (s === "atrasada") at++;
+      else if (s === "concluída" || s === "concluida") co++;
+    });
+    
+    if ($("ms-agendadas")) $("ms-agendadas").textContent = ag;
+    if ($("ms-andamento")) $("ms-andamento").textContent = and; 
+    if ($("ms-atrasadas")) $("ms-atrasadas").textContent = at;
+    if ($("ms-concluidas")) $("ms-concluidas").textContent = co;
+
+    renderizarListaManutencao(""); 
+  }
+  
+  function renderizarListaManutencao(filtro = "") {
+    const container = $("manut-list");
+    
+    const dadosFiltrados = cacheManutencoes.filter(m => {
+      const placa = (m.placa_veiculo || "").toLowerCase();
+      const servico = (m.tipo_servico || "").toLowerCase();
+      const odometro = m.valor_odometro ? m.valor_odometro.toString() : "";
+      return placa.includes(filtro) || servico.includes(filtro) || odometro.includes(filtro);
+    });
+
+    if (!dadosFiltrados.length) {
+      container.innerHTML = '<div class="empty-state">Nenhum registro encontrado.</div>';
+      return;
+    }
+
+    container.innerHTML = dadosFiltrados.map(m => {
+      // Mapeamento para 4 status
+      const statusColor = { 
+        "agendada": "#FF6B00", 
+        "em andamento": "#9008ea", 
+        "atrasada": "#EF4444", 
+        "concluída": "#22C55E" 
+      };
+      
+      const statusLimpo = (m.status || "Agendada").toLowerCase();
+      const color = statusColor[statusLimpo] || "#888";
+      const dt = m.data?.toDate?.();
+      const dtStr = dt ? dt.toLocaleDateString("pt-BR") : "—";
+      
+      return `
+        <div class="manut-card clickable-card" onclick="">
+          <div class="manut-icon" style="background:${color}22; color:${color}">🔧</div>
+          <div class="manut-info">
+            <div class="manut-veiculo">${m.placa_veiculo || "Veículo"}</div>
+            <div class="manut-servico">${m.tipo_servico || "Serviço Geral"}</div>
+            <div class="manut-meta">
+              <span>📅 ${dtStr}</span>
+              ${m.custo ? `<span>💰 R$ ${m.custo.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>` : ""}
+              ${m.odometro ? `<span>🛞Odometro: ${m.odometro.toLocaleString('pt-BR', {minimumFractionDigits: 0})} KM </span>`  :  ""}
+            </div>
+          </div>
+          <div class="manut-status-badge" style="background:${color}22; color:${color}">${m.status || "—"}</div>
+          <div><button type="button" class="btn btn-outline-warning" onclick="editarRegistro('${m.id}', '${m.status || 'Agendada'}', '${m.placa_veiculo || ''}', '${m.tipo_servico || ''}', '${m.odometro || ''}')"><i class="bi bi-pencil-square"></i></i></button></div>
+          <div><button type="button" class="btn btn-outline-danger" onclick="apagarRegistro('${m.id}')"><i class="bi bi-trash-fill"></i></button></div>
+          </div>
+        `;
+    }).join("");
+  }
+
+// Apagar Registro de Manutenção
+window.apagarRegistro = async function(docId) {
+  if (!docId) {
+    showToast('ID do registro inválido. Exclusão cancelada.', 'error');
+    return;
+  }
+
+  try {
+    await deleteDoc(doc(db, "manutencoes", docId));
+    showToast("Registro de manutenção excluído com sucesso!");
+    loadMaintenance(); // Recarrega a lista
+  } catch (err) {
+    const msg = err?.message || String(err);
+    showToast("Erro ao excluir: " + msg, "error");
+  }
+}
+
+// Simulação de banco de dados local
+  let manutencoes = []; 
+
+  if ($("frota-search")) {
+  $("frota-search").addEventListener("input", loadMaintenance);
+}
+
+// ─── MANUTENÇÃO INTEGRADA COM FIRESTORE ───────────────────────────────────────
+
+// Adicionamos 'window.' para garantir que o botão HTML a enxergue
+// ─── MODAIS CUSTOMIZADOS DE MANUTENÇÃO (SEM PROMPTS NATIVOS) ───────────────────
+
+  window.abrirModalManutencao = function(modo) {
+    if (modo !== 'adicionar') return;
+
+    // Cria a estrutura do modal de Adição
+    const backdrop = document.createElement("div");
+    backdrop.className = "custom-modal-backdrop";
+    backdrop.id = "modal-manut-add";
+
+    backdrop.innerHTML = `
+      <div class="custom-modal-box">
+        <div class="custom-modal-header">
+          <div class="custom-modal-title">🔧 Adicionar Registro de Manutenção</div>
+          <button class="custom-modal-close" onclick="document.getElementById('modal-manut-add').remove()">&times;</button>
+        </div>
+        <div class="custom-modal-body">
+          <div class="custom-form-group">
+            <label>Placa do Veículo</label>
+            <input type="text" id="add-manut-placa" class="custom-form-input" placeholder="Ex: ABC1D23" style="text-transform: uppercase;">
+          </div>
+          <div class="custom-form-group">
+            <label>Descrição do Serviço</label>
+            <input type="text" id="add-manut-servico" class="custom-form-input" placeholder="Ex: Troca de óleo e filtros">
+          </div>
+          <div class="custom-form-group">
+            <label>Custo Estimado (R$)</label>
+            <input type="number" id="add-manut-custo" class="custom-form-input" placeholder="Ex: 450.00" step="0.01">
+          </div>
+          <div class="custom-form-group">
+            <label>Odometro</label>
+            <input type="number" id="add-manut-odometro" class="custom-form-input" placeholder="Ex:120000" step="0.01">
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button class="btn-secondary" style="padding: 8px 16px;" onclick="document.getElementById('modal-manut-add').remove()">Cancelar</button>
+          <button class="btn-primary" style="padding: 8px 16px;" id="btn-submit-add-manut">Salvar Registro</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(backdrop);
+
+    // Ação de Salvar na coleção do Firestore
+    document.getElementById("btn-submit-add-manut").onclick = async () => {
+      const placa = document.getElementById("add-manut-placa").value.trim();
+      const servico = document.getElementById("add-manut-servico").value.trim();
+      const custoRaw = document.getElementById("add-manut-custo").value;
+      const valor_odometro = document.getElementById("add-manut-odometro").value;
+
+      if (!placa || !servico) {
+        alert("Por favor, preencha os campos obrigatórios (Placa e Serviço).");
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, "manutencoes"), {
+          placa_veiculo: placa.toUpperCase(),
+          tipo_servico: servico,
+          data: new Date(),
+          status: 'Agendada',
+          custo: custoRaw ? parseFloat(custoRaw) : null,
+          odometro: valor_odometro ? parseFloat(valor_odometro) : null
+        });
+
+        showToast("Manutenção agendada com sucesso!");
+        backdrop.remove(); // Fecha o modal
+        loadMaintenance(); // Recarrega a lista
+      } catch (err) {
+        showToast("Erro ao agendar: " + err.message, "error");
+      }
+    };
+  };
+
+  window.editarRegistro = function(docId, statusAtual, placa, servico, odometro) {
+    // Cria a estrutura do modal de Edição de Status
+    const backdrop = document.createElement("div");
+    backdrop.className = "custom-modal-backdrop";
+    backdrop.id = "modal-manut-edit";
+
+    backdrop.innerHTML = `
+      <div class="custom-modal-box">
+        <div class="custom-modal-header">
+          <div class="custom-modal-title">📝 Edição de Registro de Manutenção</div>
+          <button class="custom-modal-close" onclick="document.getElementById('modal-manut-edit').remove()">&times;</button>
+        </div>
+        <div class="custom-modal-body">
+              <div>
+              <label>Placa do Veículo</label>
+              <input type="text" id="edit-manut-placa" class="custom-form-input" placeholder="Ex: ABC-1234" value="${placa}" readonly>
+              </div>
+              <div>
+              <label>Descrição do Serviço</label>
+              <input type="text" id="edit-manut-servico" class="custom-form-input" placeholder="Ex: Troca de óleo" value="${servico}" readonly>
+              </div>
+              <div>
+              <label>Odometro</label>
+              <input type="number" id="edit-manut-odometro" class="custom-form-input" placeholder="Ex: 120000" value="${odometro}" readonly>
+              </div>
+          <div class="custom-form-group">
+            <label>Alterar Status do Serviço</label>
+            <select id="edit-manut-status" class="custom-form-input">
+              <option value="Agendada" ${statusAtual === 'Agendada' ? 'selected' : ''}>Agendada</option>
+              <option value="Em andamento" ${statusAtual === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
+              <option value="Atrasada" ${statusAtual === 'Atrasada' ? 'selected' : ''}>Atrasada</option>
+              <option value="Concluída" ${statusAtual === 'Concluída' || statusAtual === 'Concluida' ? 'selected' : ''}>Concluída</option>
+            </select>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button class="btn-secondary" style="padding: 8px 16px;" onclick="document.getElementById('modal-manut-edit').remove()">Cancelar</button>
+          <button class="btn-primary" style="padding: 8px 16px;" id="btn-submit-edit-manut">Atualizar Status</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(backdrop);
+
+    // Ação de Atualizar o campo no Firestore
+    document.getElementById("btn-submit-edit-manut").onclick = async () => {
+      const novoStatus = document.getElementById("edit-manut-status").value;
+      const novaPlaca = document.getElementById("edit-manut-placa").value;
+      const novoServico = document.getElementById("edit-manut-servico").value;
+      const novoOdometro = document.getElementById("edit-manut-odometro").value;
+      try {
+        const docRef = doc(db, "manutencoes", docId);
+        await updateDoc(docRef, {
+          status: novoStatus,
+          placa: novaPlaca,
+          servico: novoServico,
+          odometro: novoOdometro
+        });
+
+        showToast("Manutenção atualizada com sucesso!");
+        backdrop.remove(); // Fecha o modal
+        loadMaintenance(); // Recarrega a lista
+      } catch (err) {
+        showToast("Erro ao atualizar manutenção: " + err.message, "error");
+      }
+    };
+  };
+
+// Função para mudar o status de uma manutenção ao clicar no card
+async function editarRegistroPrompt(docId, statusAtual) {
+  const novoStatus = prompt(`Alterar status da manutenção. Digite uma das opções:\n- Agendada\n- Em andamento\n- Atrasada\n- Concluída\n\nStatus Atual: ${statusAtual}`);
+  
+  if (!novoStatus) return; // Se cancelar, não faz nada
+  
+  const statusFormatado = novoStatus.trim();
+  const validos = ["Agendada", "Em andamento", "Atrasada", "Concluída", "Concluida"];
+  
+  // Validação simples do que foi digitado
+  if (!validos.some(v => v.toLowerCase() === statusFormatado.toLowerCase())) {
+    alert("Status inválido! Digite apenas: Agendada, Em andamento, Atrasada ou Concluída.");
+    return;
+  }
+
+  try {
+    const docRef = doc(db, "manutencoes", docId);
+    await updateDoc(docRef, {
+      status: statusFormatado
+    });
+
+    showToast("Status atualizado com sucesso!");
+    loadMaintenance(); // Atualiza a tela
+  } catch (err) {
+    showToast("Erro ao atualizar status: " + err.message, "error");
+  }
+}
+
+  // ─── PROFILE ──────────────────────────────────────────────────────────────
+  async function loadProfile() {
+    if (!currentUser) return;
+    const snap = await getDoc(doc(db, "usuarios", currentUser.uid));
+    const data = snap.exists() ? snap.data() : {};
+    $("profile-name").textContent = data.nome || "—";
+    $("profile-role").textContent = data.tipo === "admin" ? "Administrador" : "Motorista";
+    $("profile-avatar-big").textContent = (data.nome || "U")[0].toUpperCase();
+    $("profile-info-rows").innerHTML = `
+      ${infoRow("Nome", data.nome)}
+      ${infoRow("E-mail", data.email || currentUser.email)}
+      ${infoRow("Cargo", data.cargo)}
+      ${infoRow("Telefone", data.telefone)}
+      ${infoRow("Filial", data.filial)}
+      ${infoRow("Tipo", data.tipo)}`;
+  }
+
+  // ─── ADMIN ────────────────────────────────────────────────────────────────
+  function bindAdminTabs() {
+    document.querySelectorAll("[data-admin-tab]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("[data-admin-tab]").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentAdminTab = btn.dataset.adminTab;
+        loadAdminList();
+      });
+    });
+    $("admin-fab").addEventListener("click", () => {
+      const map = { caminhoes: "frota", carretas: "carreta", usuarios: "user" };
+      openModal(map[currentAdminTab] || "frota");
+    });
+    // Hide FAB on "sistema" tab
+    document.querySelector('[data-admin-tab="sistema"]').addEventListener("click", () => {
+      hide($("admin-fab"));
+    });
+    document.querySelectorAll('[data-admin-tab="caminhoes"], [data-admin-tab="carretas"], [data-admin-tab="usuarios"]').forEach(b => {
+      b.addEventListener("click", () => show($("admin-fab")));
+    });
+  }
+
+  async function loadAdmin() {
+    loadAdminList();
+  }
+
+  async function loadAdminList() {
+    const container = $("admin-list");
+    container.innerHTML = '<div class="empty-state">Carregando...</div>';
+
+    if (currentAdminTab === "sistema") {
+      hide($("admin-fab"));
+      container.innerHTML = `
+        <div class="sistema-grid">
+          <div class="sistema-card danger-card">
+            <h4>⚠️ Zona de Perigo</h4>
+            <p>Ações irreversíveis de banco de dados — apenas para desenvolvimento.</p>
+            <div class="sistema-actions">
+              <button class="btn btn-danger" id="btn-clear-db">🗑 Apagar Todos os Dados</button>
+            </div>
+          </div>
+          <div class="sistema-card">
+            <h4>ℹ️ Informações do Sistema</h4>
+            <div class="info-rows">
+              ${infoRow("Projeto Firebase", "frota-39c83")}
+              ${infoRow("Versão", "2.0.0 (Web)")}
+              ${infoRow("Usuário logado", currentUserData?.nome)}
+              ${infoRow("Tipo", currentUserData?.tipo)}
+            </div>
+          </div>
+        </div>`;
+      $("btn-clear-db").addEventListener("click", () => {
+        if (confirm("⚠️ Isso vai APAGAR TODOS os dados! Tem certeza?")) {
+          showToast("Operação cancelada (protegida em produção).", "error");
+        }
+      });
+      return;
+    }
+
+    const colMap = { caminhoes: "caminhoes", carretas: "carretas", usuarios: "usuarios" };
+    const colName = colMap[currentAdminTab];
+    const snap = await getDocs(collection(db, colName));
+    const docs = [];
+    snap.forEach(d => docs.push({ id: d.id, ...d.data() }));
+
+    if (!docs.length) { container.innerHTML = '<div class="empty-state">Nenhum item cadastrado.</div>'; return; }
+
+    container.innerHTML = `<div class="admin-table-wrap"><table class="admin-table">
+      <thead><tr>
+        ${currentAdminTab === "usuarios"
+          ? "<th>Nome</th><th>E-mail</th><th>Tipo</th><th>Ações</th>"
+          : "<th>Placa</th><th>Modelo</th><th>Marca</th><th>Ações</th>"}
+      </tr></thead>
+      <tbody>
+        ${docs.map(d => currentAdminTab === "usuarios"
+          ? `<tr>
+              <td>${d.nome || "—"}</td>
+              <td>${d.email || "—"}</td>
+              <td><span class="role-badge role-${d.tipo}">${d.tipo || "—"}</span></td>
+              <td>
+                <button class="btn-table-edit" data-docid="${d.id}" data-type="user">✏️</button>
+                <button class="btn-table-del" data-docid="${d.id}" data-col="usuarios">🗑</button>
+              </td>
+             </tr>`
+          : `<tr>
+              <td><strong>${d.placa || "—"}</strong></td>
+              <td>${d.modelo || "—"}</td>
+              <td>${d.marca || "—"}</td>
+              <td>
+                <button class="btn-table-edit" data-docid="${d.id}" data-type="${currentAdminTab === 'caminhoes' ? 'frota' : 'carreta'}">✏️</button>
+                <button class="btn-table-del" data-docid="${d.id}" data-col="${currentAdminTab}">🗑</button>
+              </td>
+             </tr>`
+        ).join("")}
+      </tbody>
+    </table></div>`;
+
+    container.querySelectorAll(".btn-table-edit").forEach(btn => {
+      btn.addEventListener("click", () => openModal(btn.dataset.type, btn.dataset.docid));
+    });
+    container.querySelectorAll(".btn-table-del").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        if (!confirm("Apagar este item?")) return;
+        await deleteDoc(doc(db, btn.dataset.col, btn.dataset.docid));
+        showToast("Item apagado.");
+        loadAdminList();
+      });
+    });
+  }
+
+  // ─── MODAL ────────────────────────────────────────────────────────────────
+  function openModal(type, docId = null) {
+    console.log('openModal called with:', { type, docId });
+    const overlay = $("modal-overlay");
+    const title = $("modal-title");
+    const body = $("modal-body");
+    console.log('openModal elements:', { overlay, title, body });
+    const isEdit = !!docId;
+
+    if (type === "frota") {
+      title.textContent = isEdit ? "Editar Caminhão" : "Registrar Caminhão";
+      body.innerHTML = formFrota();
+    } else if (type === "carreta") {
+      title.textContent = isEdit ? "Editar Carreta" : "Registrar Carreta";
+      body.innerHTML = formCarreta();
+    } else if (type === "user") {
+      title.textContent = isEdit ? "Editar Usuário" : "Registrar Usuário";
+      body.innerHTML = formUser();
+    }
+
+    // Load existing data if editing
+    if (isEdit) {
+      const colMap = { frota: "caminhoes", carreta: "carretas", user: "usuarios" };
+      getDoc(doc(db, colMap[type], docId)).then(snap => {
+        if (!snap.exists()) return;
+        const d = snap.data();
+        Object.entries(d).forEach(([k, v]) => {
+          const el = body.querySelector(`[name="${k}"]`);
+          if (el) el.value = v;
+        });
+      });                                                                                          
+    }
+
+    body.querySelector("form").addEventListener("submit", async e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const data = Object.fromEntries(fd.entries());
+      data.last_updated_at = serverTimestamp();
+      data.last_updated_by_name = currentUserData?.nome || "Admin";
+
+      const colMap = { frota: "caminhoes", carreta: "carretas", user: "usuarios" };
+      const colName = colMap[type];
+
+      try {
+        if (isEdit) {
+          await updateDoc(doc(db, colName, docId), data);
+          showToast("Atualizado com sucesso!");
+        } else {
+          data.created_at = serverTimestamp();
+          await addDoc(collection(db, colName), data);
+          showToast("Cadastrado com sucesso!");
+        }
+        closeModal();
+        if (currentPage === "data") loadFrota();
+        if (currentPage === "admin") loadAdminList();
+      } catch (err) {
+        showToast("Erro: " + err.message, "error");
+      }
+    });
+
+    console.log('before show overlay classes:', overlay?.className);
+    overlay.style.display = 'flex';
+    overlay.style.zIndex = '100000';
+    show(overlay);
+    console.log('after show overlay classes:', overlay?.className);
+    console.log('overlay rect:', overlay.getBoundingClientRect());
+  }
+
+  function closeModal() {
+    hide($("modal-overlay"));
+    $("modal-body").innerHTML = "";
+  }
+
+  $("modal-close").addEventListener("click", closeModal);
+  $("modal-overlay").addEventListener("click", e => { if (e.target === $("modal-overlay")) closeModal(); });
+
+  function formFrota() {
+    return `<form id="modal-form">
+      <div class="form-row">
+        <div class="form-group"><label>Placa</label><input name="placa" placeholder="ABC-1234" required /></div>
+        <div class="form-group"><label>Marca</label><input name="marca" placeholder="Volvo, Scania..." /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Modelo</label><input name="modelo" placeholder="FH 540" /></div>
+        <div class="form-group"><label>Ano Modelo</label><input name="ano_modelo" type="number" placeholder="2023" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Cor</label><input name="cor" placeholder="Branco" /></div>
+        <div class="form-group"><label>Filial</label><input name="filial" placeholder="SP, RJ..." /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Chassi</label><input name="chassi" /></div>
+        <div class="form-group"><label>RENAVAM</label><input name="renavam" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Tecnologia</label><input name="tecnologia" placeholder="Tracker, Híbrido..." /></div>
+        <div class="form-group"><label>Operação</label><input name="operacao" placeholder="Transferência..." /></div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Salvar</button>
+    </form>`;
+  }
+
+  function formCarreta() {
+    return `<form id="modal-form">
+      <div class="form-row">
+        <div class="form-group"><label>Placa</label><input name="placa" placeholder="BBB-0001" required /></div>
+        <div class="form-group"><label>Marca</label><input name="marca" placeholder="FACCHINI, Randon..." /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Modelo</label><input name="modelo" placeholder="Bitrem, Sider..." /></div>
+        <div class="form-group"><label>Ano Fabricação</label><input name="ano_fabricacao" type="number" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Cor</label><input name="cor" placeholder="Branco" /></div>
+        <div class="form-group"><label>Capacidade (t)</label><input name="capacidade" type="number" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Chassi</label><input name="chassi" /></div>
+        <div class="form-group"><label>RENAVAM</label><input name="renavam" /></div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Salvar</button>
+    </form>`;
+  }
+
+  function formUser() {
+    return `<form id="modal-form">
+      <div class="form-group"><label>Nome</label><input name="nome" required /></div>
+      <div class="form-group"><label>E-mail</label><input name="email" type="email" required /></div>
+      <div class="form-group"><label>Tipo</label>
+        <select name="tipo">
+          <option value="motorista">Motorista</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Cargo</label><input name="cargo" placeholder="Motorista, Analista..." /></div>
+      <div class="form-group"><label>Telefone</label><input name="telefone" /></div>
+      <div class="form-group"><label>Filial</label><input name="filial" /></div>
+      <button type="submit" class="btn btn-primary btn-full">Salvar</button>
+    </form>`;
+  }
+</script>
+</body>
+</html>
