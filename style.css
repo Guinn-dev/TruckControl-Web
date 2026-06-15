@@ -1,8 +1,8 @@
-/* ================================================================
-   TRUCKCONTROL WEB — STYLESHEET
-   Design: Industrial-Refined / Dark Sidebar + Light Content
-   Fonts: Syne (display) + DM Sans (body)
-   ================================================================ */
+/* =============================================
+   TRUCKCONTROL versão WEB 
+   Design: Industrial-Refinado - 
+   Fontes: Syne (exibição) + DM Sans (corpo)
+   ============================================= */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -44,7 +44,7 @@ input, select, textarea { font-family: inherit; }
 .hidden { display: none !important; }
 
 /* ================================================================
-   LOADING SCREEN
+   TELA DE CARREGAMENTO (firulagem só para 1º acesso kkkkk) 
    ================================================================ */
 #loading-screen { position: fixed; inset: 0; z-index: 9999; background: var(--sidebar-bg); display: flex; align-items: center; justify-content: center; animation: fadeOut 0.4s ease 1s both; }
 @keyframes fadeOut { to { opacity: 0; pointer-events: none; } }
@@ -56,9 +56,9 @@ input, select, textarea { font-family: inherit; }
 .loader-bar-fill { height: 100%; width: 0; background: var(--orange); border-radius: 99px; animation: barFill 1s ease-in-out forwards; }
 @keyframes barFill { to { width: 100%; } }
 
-/* ================================================================
-   LOGIN
-   ================================================================ */
+/* ==================================
+   PAGINA DE LOGIN
+   ================================== */
 #page-login { min-height: 100vh; display: flex; }
 .login-split { display: flex; width: 100%; min-height: 100vh; }
 .login-brand { flex: 0 0 440px; background: linear-gradient(145deg, #0F1117 0%, #1a1f2e 100%); display: flex; align-items: center; justify-content: center; padding: 48px; position: relative; overflow: hidden; }
@@ -87,18 +87,18 @@ input, select, textarea { font-family: inherit; }
 .login-ui-divider { display: flex; align-items: center; gap: 12px; margin: 18px 0; color: var(--text-muted); font-size: 0.83rem; font-weight: 600; }
 .login-ui-divider::before, .login-ui-divider::after { content: ""; flex: 1; height: 1px; background: var(--border); }
 
-/* ================================================================
+/* ===================================
    FORM ELEMENTS
-   ================================================================ */
+   =================================== */
 .form-group { margin-bottom: 16px; }
 .form-group label { display: block; font-size: 0.83rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
 .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 0.93rem; background: var(--bg); transition: border-color 0.2s, box-shadow 0.2s; color: var(--text-primary); }
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--orange); outline: none; box-shadow: 0 0 0 3px var(--orange-dim); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
-/* ================================================================
-   BUTTONS
-   ================================================================ */
+/* ===================================
+   BOTÕES
+   =================================== */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 22px; border-radius: var(--radius-sm); font-size: 0.88rem; font-weight: 600; transition: all 0.2s; font-family: "DM Sans", sans-serif; }
 .btn-primary { background: var(--orange); color: #fff; }
 .btn-primary:hover { background: #e55f00; box-shadow: 0 4px 14px rgba(255,107,0,0.35); transform: translateY(-1px); }
@@ -126,9 +126,9 @@ input, select, textarea { font-family: inherit; }
 .btn-detail-delete { background: var(--red-dim); color: var(--red); border-color: rgba(239,68,68,0.25); }
 .btn-detail-delete:hover { background: var(--red); color: #fff; box-shadow: 0 3px 12px rgba(239,68,68,0.35); transform: translateY(-1px); }
 
-/* ================================================================
-   ALERTS / TOAST
-   ================================================================ */
+/* ========================================
+   ALERTAS 
+   ======================================== */
 .alert { padding: 12px 16px; border-radius: var(--radius-sm); font-size: 0.875rem; margin-bottom: 16px; }
 .alert-error { background: var(--red-dim); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
 
@@ -138,9 +138,9 @@ input, select, textarea { font-family: inherit; }
 .toast.error { background: var(--red); color: #fff; }
 .toast.warning { background: var(--yellow); color: #fff; }
 
-/* ================================================================
+/* ==================================================
    MAIN LAYOUT
-   ================================================================ */
+   ================================================== */
 #main-layout { display: flex; min-height: 100vh; }
 
 /* SIDEBAR */
@@ -167,9 +167,9 @@ input, select, textarea { font-family: inherit; }
 /* MAIN CONTENT */
 #main-content { flex: 1; margin-left: var(--sidebar-w); padding: 32px; min-height: 100vh; }
 
-/* ================================================================
+/* =================================================
    INNER PAGES
-   ================================================================ */
+   ================================================= */
 .inner-page { animation: pageIn 0.25s ease; }
 @keyframes pageIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -178,9 +178,9 @@ input, select, textarea { font-family: inherit; }
 .page-subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px; }
 .header-date { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; text-transform: capitalize; }
 
-/* ================================================================
+/* =================================================
    KPI CARDS
-   ================================================================ */
+   ================================================= */
 /* Container dos Cards */
 .kpi-grid {display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 10px; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;}
 
@@ -202,9 +202,9 @@ input, select, textarea { font-family: inherit; }
 .kpi-value {font-size: 1.5rem; font-weight: 700; color: #333; line-height: 1; margin-bottom: 4px;}
 .kpi-label {font-size: 0.85rem; font-weight: 500; color: #777; text-transform: uppercase; letter-spacing: 0.5px;}
 
-/* ================================================================
+/* ===================================================
    CHARTS
-   ================================================================ */
+   =================================================== */
 .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 24px; }
 
 .chart-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow-sm);}
@@ -217,9 +217,9 @@ input, select, textarea { font-family: inherit; }
 .legend-item { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--text-secondary); }
 .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
-/* ================================================================
+/* ===================================================
    SECTION CARD
-   ================================================================ */
+   =================================================== */
 .section-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-sm); overflow: hidden; }
 .section-card-header { padding: 18px 24px; border-bottom: 1px solid var(--border); }
 .section-card-header h3 { font-size: 0.95rem; font-weight: 700; }
@@ -232,25 +232,25 @@ input, select, textarea { font-family: inherit; }
 .update-label { font-size: 0.9rem; font-weight: 600; }
 .update-by { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
 
-/* ================================================================
+/* ===================================================
    TABS
-   ================================================================ */
+   =================================================== */
 .tabs-bar {display: flex; gap: 8px; background: var(--bg); padding: 4px; border-radius: var(--radius); border: 1px solid var(--border); width: fit-content; margin-bottom: 20px;}
 .tab-btn {display: flex; align-items: center; gap: 8px; padding: 8px 20px; border: none; background: transparent; color: #64748b; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; border-radius: var(--radius-sm); transition: all 0.2s ease;}
 .tab-btn:hover {color: var(--primary); background: rgba(30, 41, 59, 0.05);}
 .tab-btn.active {background-color: var(--primary); color: #ffffff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);}
 .tab-btn svg {stroke: currentColor; transition: stroke 0.2s ease;}
 
-/* ================================================================
+/* ===================================================
    SEARCH
-   ================================================================ */
+   ==================================================== */
 .search-bar-wrap { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 16px; margin-bottom: 20px; color: var(--text-muted); }
 .search-bar-wrap input { border: none; background: none; flex: 1; font-size: 0.9rem; color: var(--text-primary); }
 .search-bar-wrap input:focus { outline: none; }
 
-/* ================================================================
+/* ===================================================
    VEHICLE GRID / CARDS
-   ================================================================ */
+   =================================================== */
 .vehicle-grid { display: flex; flex-direction: column; gap: 10px; }
 .vehicle-card { display: flex; align-items: center; gap: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; box-shadow: var(--shadow-sm); transition: all 0.2s;}
 .vehicle-card:hover { box-shadow: var(--shadow-md); transform: translateX(3px); border-color: var(--orange); }
@@ -265,9 +265,9 @@ input, select, textarea { font-family: inherit; }
 .clickable-card:hover {transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--accent); /* Cor de destaque ao passar o mouse */}
 .vehicle-actions {position: relative; z-index: 2;}
 
-/* ================================================================
+/* =====================================================
    VEHICLE CARD ACTION BUTTONS (Edit / Delete)
-   ================================================================ */
+   ===================================================== */
 .vehicle-actions { display: flex; gap: 6px; align-items: center; position: relative; z-index: 2; }
 
 .btn-card-action { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: var(--radius-sm); font-size: 0.78rem; font-weight: 600; font-family: "DM Sans", sans-serif; border: 1.5px solid transparent; cursor: pointer; transition: all 0.18s ease; white-space: nowrap; }
@@ -281,9 +281,9 @@ input, select, textarea { font-family: inherit; }
 
 @media (max-width: 600px) { .btn-card-action span { display: none; } .btn-card-action { padding: 8px; } }
 
-/* ================================================================
+/* =================================
    DETAIL PAGE — HEADER ACTIONS
-   ================================================================ */
+   ================================= */
 .detail-page-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
 
 .detail-header-actions { display: flex; gap: 8px; align-items: center; }
@@ -298,9 +298,9 @@ input, select, textarea { font-family: inherit; }
 .btn-detail-delete { background: rgba(239,68,68,0.08); color: var(--red); border-color: rgba(239,68,68,0.25); }
 .btn-detail-delete:hover { background: var(--red); color: #fff; border-color: var(--red); box-shadow: 0 3px 12px rgba(239,68,68,0.35); transform: translateY(-1px); }
 
-/* ================================================================
+/* =================================
    VEHICLE DETAIL — HERO VARIANTS
-   ================================================================ */
+   ================================= */
 .detail-hero { text-align: center; padding: 36px 24px; border-radius: var(--radius); margin-bottom: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); position: relative; overflow: hidden; }
 .detail-hero::before { content: ""; position: absolute; inset: 0; background: var(--surface); z-index: 0; }
 .detail-hero > * { position: relative; z-index: 1; }
@@ -322,9 +322,9 @@ input, select, textarea { font-family: inherit; }
 .status-em-uso { background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(255,107,0,0.25); }
 .status-manutencao { background: rgba(245,158,11,0.1); color: var(--yellow); border: 1px solid rgba(245,158,11,0.25); }
 
-/* ================================================================
+/* ======================================
    COMPOSITION SLOTS — ENHANCED
-   ================================================================ */
+   ======================================*/
 .comp-slots { display: flex; flex-direction: column; gap: 10px; padding: 16px 24px; }
 
 .comp-slot { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-radius: var(--radius-sm); background: var(--bg); border: 1.5px solid var(--border); transition: all 0.2s; }
@@ -355,9 +355,9 @@ input, select, textarea { font-family: inherit; }
 .comp-slot-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; }
 .comp-slot-value { font-family: "Syne", sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--orange); }
 
-/* ================================================================
+/* ==================
    MAINTENANCE
-   ================================================================ */
+   ================== */
 .manut-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
 .manut-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; text-align: center; box-shadow: var(--shadow-sm); }
 .ms-num { font-family: 'Inter', sans-serif; font-size: 2rem; font-weight: 700; line-height: 1.2; }
@@ -399,18 +399,18 @@ input, select, textarea { font-family: inherit; }
 
 .btn-primary:hover { background: #2d3748; }
 .btn-secondary:hover { background: #f7fafc; }
-/* ================================================================
+/* ==================
    PROFILE
-   ================================================================ */
+   ================== */
 .profile-layout { display: grid; grid-template-columns: 280px 1fr; gap: 20px; }
 .profile-hero { background: var(--sidebar-bg); border-radius: var(--radius); padding: 36px 24px; text-align: center; color: #fff; }
 .profile-avatar-big { width: 80px; height: 80px; border-radius: 50%; background: var(--orange); color: #fff; display: flex; align-items: center; justify-content: center; font-family: "Syne", sans-serif; font-size: 2rem; font-weight: 800; margin: 0 auto 16px; }
 .profile-name { font-family: "Syne", sans-serif; font-size: 1.25rem; font-weight: 800; margin-bottom: 6px; }
 .profile-role { font-size: 0.85rem; color: rgba(255,255,255,0.5); }
 
-/* ================================================================
+/* ==================
    ADMIN
-   ================================================================ */
+   ================== */
 .admin-table-wrap { overflow-x: auto; }
 .admin-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
 .admin-table thead { background: var(--bg); }
@@ -436,9 +436,9 @@ input, select, textarea { font-family: inherit; }
 .danger-card { border: 1.5px solid var(--red-dim); }
 .sistema-actions { display: flex; gap: 10px; }
 
-/* ================================================================
+/* ===========
    MODAL
-   ================================================================ */
+   ===========*/
 .modal-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeOverlay 0.2s ease; }
 @keyframes fadeOverlay { from { opacity: 0; } to { opacity: 1; } }
 .modal { background: var(--surface); border-radius: 20px; width: 100%; max-width: 580px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: slideModal 0.25s ease; }
@@ -450,22 +450,22 @@ input, select, textarea { font-family: inherit; }
 .modal-body { padding: 24px 28px; }
 .modal-body form { display: flex; flex-direction: column; gap: 4px; }
 
-/* ================================================================
+/* ============
    TOAST
-   ================================================================ */
+   ============ */
 .toast { position: fixed; bottom: 28px; right: 28px; z-index: 1000; padding: 14px 22px; border-radius: var(--radius-sm); font-size: 0.875rem; font-weight: 600; box-shadow: var(--shadow-lg); animation: toastIn 0.3s ease; }
 @keyframes toastIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 .toast.success { background: var(--green); color: #fff; }
 .toast.error { background: var(--red); color: #fff; }
 
-/* ================================================================
+/* ===============
    EMPTY STATE
-   ================================================================ */
+   =============== */
 .empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); font-size: 0.9rem; }
 
-/* ================================================================
+/* ================
    RESPONSIVE
-   ================================================================ */
+   ================ */
 @media (max-width: 1100px) {
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .charts-row { grid-template-columns: 1fr; }
@@ -498,9 +498,9 @@ input, select, textarea { font-family: inherit; }
   .tabs-bar { flex-wrap: wrap; }
 }
 
-/* ================================================================
+/* =======================
    VEHICLE DETAIL PAGE
-   ================================================================ */
+   ======================= */
 .detail-page-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 24px;}
 .btn-primary {background: #1a202c; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;}
 .btn-back { display: inline-flex; align-items: center; gap: 8px; background: var(--surface); border: 1.5px solid var(--border); padding: 8px 16px; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); cursor: pointer; transition: all 0.2s ease; }
@@ -547,9 +547,9 @@ input, select, textarea { font-family: inherit; }
 /* Estilização para placas dentro dos detalhes */
 .badge-placa { background: #1e293b; color: #ffffff; padding: 4px 10px; border-radius: 6px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.5px; border: 1px solid #475569; }
 
-/* ================================================================
+/* ======================================================
    REFINE DETALHES DE VEÍCULOS (CONSERTO DE DIAGRAMAÇÃO)
-   ================================================================ */
+   ====================================================== */
 
 /* Banner Principal Superior (Hero) */
 .detail-hero { border-radius: var(--radius); padding: 28px; margin-bottom: 24px; position: relative; overflow: hidden; box-shadow: var(--shadow-sm); font-family: 'DM Sans', sans-serif; border: 1px solid var(--border);}
@@ -613,9 +613,9 @@ input, select, textarea { font-family: inherit; }
 
 .manut-card.clickable-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--text-muted); }
 
-/* ================================================================
+/* =====================================================
    MODAIS CUSTOMIZADOS DE MANUTENÇÃO (Adição e Edição)
-   ================================================================ */
+   ===================================================== */
 .custom-modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 9999; font-family: 'DM Sans', sans-serif; }
 
 .custom-modal-box { background: var(--surface); border-radius: var(--radius); width: 100%; max-width: 460px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); border: 1px solid var(--border); overflow: hidden; animation: modalScaleUp 0.2s ease-out; }
