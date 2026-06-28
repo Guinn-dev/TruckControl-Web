@@ -205,16 +205,22 @@ input, select, textarea { font-family: inherit; }
 /* ================================================================
    CHARTS
    ================================================================ */
-.charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 24px; }
+.charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
 
 .chart-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow-sm);}
+.chart-card.chart-wide { grid-column: 1 / -1; }
 .chart-header { padding: 20px 24px 12px; }
 .chart-header h3 { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
-.chart-body { padding: 8px 20px 20px; }
+.chart-body { padding: 16px 24px 24px; }
 .chart-donut-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; padding-top: 12px; }
 
-.donut-legend { display: flex; flex-direction: column; gap: 8px; width: 100%; }
-.legend-item { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--text-secondary); }
+.chart-body.chart-with-legend { display: flex; flex-direction: column; height: 400px; }
+.chart-body.chart-with-legend canvas { flex: 1; min-height: 300px; }
+.chart-body { display: flex; flex-direction: column; }
+
+.donut-legend { display: flex; flex-direction: row; flex-wrap: nowrap; gap: 12px; width: 100%; padding: 12px 20px 0; justify-content: flex-start; overflow-x: auto; }
+.chart-legend { display: flex; flex-direction: row; flex-wrap: nowrap; gap: 12px; width: 100%; padding: 12px 20px 0; justify-content: flex-start; overflow-x: auto; white-space: nowrap; }
+.legend-item { display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-secondary); flex-shrink: 0; }
 .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
 /* ================================================================
@@ -225,7 +231,6 @@ input, select, textarea { font-family: inherit; }
 .section-card-header h3 { font-size: 0.95rem; font-weight: 700; }
 
 /* Recent Updates */
-.updates-list { }
 .update-row { display: flex; align-items: center; gap: 14px; padding: 14px 24px; border-bottom: 1px solid var(--border); transition: background 0.15s; }
 .update-row:last-child { border-bottom: none; }
 .update-row:hover { background: var(--bg); }
@@ -440,7 +445,7 @@ input, select, textarea { font-family: inherit; }
 /* ================================================================
    MODAL
    ================================================================ */
-.modal-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeOverlay 0.2s ease; }
+.modal-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeOverlay 0.2s ease; }
 @keyframes fadeOverlay { from { opacity: 0; } to { opacity: 1; } }
 .modal { background: var(--surface); border-radius: 20px; width: 100%; max-width: 580px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); animation: slideModal 0.25s ease; }
 @keyframes slideModal { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
