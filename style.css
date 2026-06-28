@@ -1,7 +1,7 @@
 /* ================================================================
    TRUCKCONTROL WEB — STYLESHEET
-   Design: Industrial-Refined / Dark Sidebar + Light Content
-   Fonts: Syne (display) + DM Sans (body)
+   Design: Industrial-Refined / reformulação total da primeira versão
+   Fontes: Syne (display) + DM Sans (body)
    ================================================================ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -362,7 +362,7 @@ input, select, textarea { font-family: inherit; }
 .comp-slot-value { font-family: "Syne", sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--orange); }
 
 /* ================================================================
-   MAINTENANCE
+   MANUTANÇÃO
    ================================================================ */
 .manut-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
 .manut-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; text-align: center; box-shadow: var(--shadow-sm); }
@@ -381,7 +381,7 @@ input, select, textarea { font-family: inherit; }
 #ms-atrasadas { color: var(--red, #e3342f); }
 #ms-concluidas { color: var(--green, #38c172); }
 
-/* Ajuste Responsivo: Se a tela for pequena, divide em 2x2 para não esmagar os números */
+/* Ajuste Responsivo para telas pequenas, divide em 2x2 para não esmagar os números */
 @media (max-width: 992px) {
   .manut-summary {
     grid-template-columns: repeat(2, 1fr);
@@ -554,7 +554,7 @@ input, select, textarea { font-family: inherit; }
 .badge-placa { background: #1e293b; color: #ffffff; padding: 4px 10px; border-radius: 6px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.5px; border: 1px solid #475569; }
 
 /* ================================================================
-   REFINE DETALHES DE VEÍCULOS (CONSERTO DE DIAGRAMAÇÃO)
+   REFINE DETALHES DE VEÍCULOS    (essa maldição ta toda mal diagramada pqp)
    ================================================================ */
 
 /* Banner Principal Superior (Hero) */

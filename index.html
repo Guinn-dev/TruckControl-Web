@@ -268,14 +268,13 @@
         </div>
       </div>
 
-      <!-- ========== FROTA (DATA) ========== -->
+      <!-- ========== FROTA (DADOS) ========== -->
       <div id="page-data" class="inner-page hidden">
         <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
           <div>
             <h1 class="page-title">Base de Dados</h1>
             <p class="page-subtitle">Caminhões e carretas cadastrados</p>
           </div>
-    <!-- O botão deve ficar aqui, após o fechamento da div de texto -->
           <button class="btn-primary-action" id="btn-add-veiculo">
             <span class="icon-plus">+</span>
               Adicionar
@@ -303,7 +302,7 @@
         </div>
       </div>
 
-      <!-- ========== DOCUMENTAÇÃO ========== -->
+      <!-- ========== DOCUMENTAÇÃO (pagina não concluida)========== -->
       <div id="page-documentation" class="inner-page hidden">
         <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
           <div>
@@ -337,7 +336,7 @@
         </div>
       </div>
 
-      <!-- ========== VEHICLE DETAIL ========== -->
+      <!-- ========== DETALHE DOS VEICULOS ========== -->
       <div id="page-detail" class="inner-page hidden">
         <div class="page-header detail-page-header">
           <button class="btn-back" id="btn-back-detail">
@@ -360,7 +359,7 @@
         </div>
       </div>
 
-      <!-- ========== MAINTENANCE ========== -->
+      <!-- ========== PAGINA DE MANUTENÇÃO ========== -->
       <div id="page-maintenance" class="inner-page hidden">
         <div class="page-header">
           <div>
@@ -403,7 +402,7 @@
         </div>
       </div>
 
-      <!-- ========== PROFILE ========== -->
+      <!-- ========== PAGINA DE PERFIL ========== -->
       <div id="page-profile" class="inner-page hidden">
         <div class="page-header">
           <h1 class="page-title">Meu Perfil</h1>
@@ -425,7 +424,7 @@
         </div>
       </div>
 
-      <!-- ========== ADMIN ========== -->
+      <!-- ========== PAGINA DE ADMIN ========== -->
       <div id="page-admin" class="inner-page hidden">
         <div class="page-header">
           <div>
@@ -453,7 +452,7 @@
   </div><!-- /main-layout -->
 
   <!-- ================================================
-       MODAL — REGISTER FROTA / CARRETA / USER
+       MODAL — REGISTRO DE CAMINHÕES / CARRETAS / USUARIOS
        ================================================ -->
   <div id="modal-overlay" class="modal-overlay hidden">
     <div class="modal" id="modal-box">
@@ -462,7 +461,6 @@
         <button class="modal-close" id="modal-close">✕</button>
       </div>
       <div class="modal-body" id="modal-body">
-        <!-- Dynamic content injected by JS -->
       </div>
     </div>
   </div>
@@ -542,7 +540,7 @@
 
   // ─── INTERAÇÕES COMPLEMENTARES DE LOGIN (ESQUECI SENHA & SOLICITAR ACESSO) ───
 
-  // 1. Modal: Esqueci Minha Senha (Idêntico ao padrão visual do sistema)
+  // Esqueci Minha Senha
   if ($("btn-forgot")) {
     $("btn-forgot").addEventListener("click", () => {
       const backdrop = document.createElement("div");
@@ -577,8 +575,7 @@
         if (!email) { alert("Por favor, introduza o seu e-mail."); return; }
         
         try {
-          // Caso queira integrar com Firebase Auth no futuro, descomente a linha abaixo:
-          // await sendPasswordResetEmail(auth, email);
+          // await sendPasswordResetEmail(auth, email); (descomentar se for integrar com firebase)
           
           showToast("Link de recuperação enviado para: " + email);
           backdrop.remove();
@@ -589,7 +586,7 @@
     });
   }
 
-  // 2. Modal: Solicitar Novo Acesso
+  // Solicitar Novo Acesso
   if ($("btn-request-access")) {
     $("btn-request-access").addEventListener("click", () => {
       const backdrop = document.createElement("div");
@@ -648,7 +645,7 @@
       };
     });
   }
-  // ─── LOGIN ────────────────────────────────────────────────────────────────
+  // ─── FUNÇÕES DA PAGINA DE LOGIN ────────────
   function showLoginPage() {
     hide($("main-layout"));
     show($("page-login"));
@@ -684,23 +681,23 @@
     return m[code] || "Erro ao entrar. Tente novamente.";
   }
 
-  // Forgot password
+  // BOTÃO RECUPERAR SENHA
   $("btn-forgot").addEventListener("click", () => {
     const email = $("login-email").value.trim();
     if (!email) { showLoginError("Digite seu e-mail acima para recuperar a senha."); return; }
     openModal("reset-password", null, email);
   });
 
-  // Terms
+  // BOTÃO TERMOS
   $("btn-terms").addEventListener("click", () => openModal("terms"));
   $("btn-privacy").addEventListener("click", () => openModal("terms"));
 
-  // Request access
+  // BOTÃO REQUERER ACESSO
   $("btn-request-access").addEventListener("click", () => {
     showLoginError("Entre em contato com o administrador: admin@jdc.com.br");
   });
 
-  // ─── LOGOUT ───────────────────────────────────────────────────────────────
+  // ─── LOGOUT ───────
   $("btn-logout").addEventListener("click", async () => {
     if (!confirm("Tem certeza que deseja sair?")) return;
     listeners.forEach(u => u());
@@ -708,25 +705,25 @@
     await signOut(auth);
   });
 
-  // ─── INIT APP ─────────────────────────────────────────────────────────────
+  // ─── INIT APP ───────
   function initApp() {
     hide($("page-login"));
     show($("main-layout"));
     
-    // Show admin nav if admin
+    // modo admin
     if (currentUserData?.tipo === "admin") {
       document.querySelectorAll(".nav-admin").forEach(el => show(el));
       document.querySelectorAll(".btn-admin-only").forEach(el => show(el));
     }
 
-    // Date
+    // Data
     $("home-date").textContent = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
 
     navigate("home");
     bindNav();
   }
 
-  // ─── NAVIGATION ───────────────────────────────────────────────────────────
+  // ─── NAVEGAÇÃO ────────
   function bindNav() {
     document.querySelectorAll(".nav-item[data-page]").forEach(item => {
       item.addEventListener("click", e => {
@@ -740,7 +737,7 @@
   }
 
   function navigate(page, extra = null) {
-    // Hide all inner pages
+    // Hide inner pages
     document.querySelectorAll(".inner-page").forEach(p => hide(p));
     // Update active nav
     document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("active"));
@@ -760,7 +757,7 @@
     else if (page === "detail") { show($("page-detail")); loadDetail(extra); }
   }
 
-  // ─── HOME / DASHBOARD ─────────────────────────────────────────────────────
+  // ─── DASHBOARD ─────────
   async function loadHome() {
     // KPIs
     const [c, ca, m, u] = await Promise.all([
@@ -918,7 +915,7 @@
     ).join("");
   }
 
-  // ─── FROTA ────────────────────────────────────────────────────────────────
+  // ─── FROTA ───────
   function bindFrotaTabs(page = "data") {
     const root = page === "documentation" ? $("page-documentation") : $("page-data");
     if (!root) return;
@@ -1030,16 +1027,15 @@
       });
   }
 
-  // ─── VEHICLE DETAIL ───────────────────────────────────────────────────────
+  // ─── DETALHE DOS VEICULOS ──────────
   async function loadDetail(extra) {
-    // extra can be { placa, tipo } or legacy string (placa only → caminhao)
     const placa = typeof extra === "string" ? extra : extra?.placa;
     const tipo  = typeof extra === "string" ? "caminhoes" : (extra?.tipo || "caminhoes");
 
     $("detail-content").innerHTML = '<div class="empty-state">Carregando...</div>';
     $("btn-back-detail").onclick = () => navigate("data");
 
-    // Hide/show admin actions
+    // admin (hide/show)
     const actionsEl = $("detail-actions");
     if (currentUserData?.tipo === "admin") {
       actionsEl.classList.remove("hidden");
@@ -1069,7 +1065,7 @@
     };
 
     if (tipo === "caminhoes") {
-      // ── CAMINHÃO DETAIL ────────────────────────────────────────────
+      // ── CAMINHÕES ──────
       const compSnap = await getDocs(query(collection(db, "composicoes"), where("id_cavalo", "==", placa)));
       const compDoc = compSnap.docs[0];
       const comp = compSnap.empty ? null : compDoc.data();
@@ -1129,7 +1125,7 @@
       if (attachBtn) attachBtn.onclick = () => openCompositionModal(placa, compId, comp);
 
     } else {
-      // ── CARRETA DETAIL ─────────────────────────────────────────────
+      // ── CARRETAS ────────
       // Find current composition (which truck is pulling this trailer)
       const compSnap = await getDocs(query(collection(db, "composicoes"),
         where("id_carreta1", "==", placa)));
@@ -1204,8 +1200,8 @@
     return `<div class="info-row"><span class="ir-label">${label}</span><span class="ir-value">${val || "—"}</span></div>`;
   }
 
-  // ─── MAINTENANCE ──────────────────────────────────────────────────────────
-  let cacheManutencoes = []; // Cache para busca instantânea
+  // ─── MANUTENÇÃO ─────
+  let cacheManutencoes = []; // busca instantânea
 
   async function loadMaintenance() {
     const snap = await getDocs(query(collection(db, "manutencoes"), orderBy("data", "desc")));
@@ -1247,7 +1243,7 @@
     }
 
     container.innerHTML = dadosFiltrados.map(m => {
-      // Mapeamento para 4 status
+      // Mapeamento para os 4 status
       const statusColor = { 
         "agendada": "#FF6B00", 
         "em andamento": "#9008ea", 
@@ -1282,8 +1278,7 @@
     }).join("");
   }
 
-// Apagar Registro de Manutenção
-window.apagarRegistro = async function(docId) {
+window.apagarRegistro = async function(docId) {      // Apagar Registro de Manutenção
   if (!docId) {
     showToast('ID do registro inválido. Exclusão cancelada.', 'error');
     return;
@@ -1292,15 +1287,14 @@ window.apagarRegistro = async function(docId) {
   try {
     await deleteDoc(doc(db, "manutencoes", docId));
     showToast("Registro de manutenção excluído com sucesso!");
-    loadMaintenance(); // Recarrega a lista
+    loadMaintenance();      // Recarrega a lista
   } catch (err) {
     const msg = err?.message || String(err);
     showToast("Erro ao excluir: " + msg, "error");
   }
 }
 
-// Simulação de banco de dados local
-  let manutencoes = []; 
+  let manutencoes = [];      // Simulação de banco de dados local
 
   if ($("manut-search")) {
     $("manut-search").addEventListener("input", (e) => renderizarListaManutencao(e.target.value.trim().toLowerCase()));
@@ -1308,13 +1302,12 @@ window.apagarRegistro = async function(docId) {
 
 // ─── MANUTENÇÃO INTEGRADA COM FIRESTORE ───────────────────────────────────────
 
-// Adicionamos 'window.' para garantir que o botão HTML a enxergue
-// ─── MODAIS CUSTOMIZADOS DE MANUTENÇÃO (SEM PROMPTS NATIVOS) ───────────────────
+// ─── MODAIS CUSTOMIZADOS DE MANUTENÇÃO ───────────────────
 
   window.abrirModalManutencao = function(modo) {
     if (modo !== 'adicionar') return;
 
-    // Cria a estrutura do modal de Adição
+    // Estrutura do modal de Adição
     const backdrop = document.createElement("div");
     backdrop.className = "custom-modal-backdrop";
     backdrop.id = "modal-manut-add";
@@ -1352,7 +1345,7 @@ window.apagarRegistro = async function(docId) {
 
     document.body.appendChild(backdrop);
 
-    // Ação de Salvar na coleção do Firestore
+    // Salva na coleção do Firestore
     document.getElementById("btn-submit-add-manut").onclick = async () => {
       const placa = document.getElementById("add-manut-placa").value.trim();
       const servico = document.getElementById("add-manut-servico").value.trim();
@@ -1384,7 +1377,7 @@ window.apagarRegistro = async function(docId) {
   };
 
   window.editarRegistro = function(docId, statusAtual, placa, servico, odometro) {
-    // Cria a estrutura do modal de Edição de Status
+    // Estrutura do modal de Edição de Status
     const backdrop = document.createElement("div");
     backdrop.className = "custom-modal-backdrop";
     backdrop.id = "modal-manut-edit";
@@ -1427,7 +1420,7 @@ window.apagarRegistro = async function(docId) {
 
     document.body.appendChild(backdrop);
 
-    // Ação de Atualizar o campo no Firestore
+    // Atualiza o campo no Firestore
     document.getElementById("btn-submit-edit-manut").onclick = async () => {
       const novoStatus = document.getElementById("edit-manut-status").value;
       const novaPlaca = document.getElementById("edit-manut-placa").value;
@@ -1443,25 +1436,24 @@ window.apagarRegistro = async function(docId) {
         });
 
         showToast("Manutenção atualizada com sucesso!");
-        backdrop.remove(); // Fecha o modal
-        loadMaintenance(); // Recarrega a lista
+        backdrop.remove(); // Fecha
+        loadMaintenance(); // Recarrega
       } catch (err) {
         showToast("Erro ao atualizar manutenção: " + err.message, "error");
       }
     };
   };
 
-// Função para mudar o status de uma manutenção ao clicar no card
+// muda o status de uma manutenção ao clicar no card 
 async function editarRegistroPrompt(docId, statusAtual) {
   const novoStatus = prompt(`Alterar status da manutenção. Digite uma das opções:\n- Agendada\n- Em andamento\n- Atrasada\n- Concluída\n\nStatus Atual: ${statusAtual}`);
   
-  if (!novoStatus) return; // Se cancelar, não faz nada
+  if (!novoStatus) return; // cancelar
   
   const statusFormatado = novoStatus.trim();
   const validos = ["Agendada", "Em andamento", "Atrasada", "Concluída", "Concluida"];
   
-  // Validação simples do que foi digitado
-  if (!validos.some(v => v.toLowerCase() === statusFormatado.toLowerCase())) {
+  if (!validos.some(v => v.toLowerCase() === statusFormatado.toLowerCase())) {     // Validação simples do que foi digitado
     alert("Status inválido! Digite apenas: Agendada, Em andamento, Atrasada ou Concluída.");
     return;
   }
@@ -1479,7 +1471,7 @@ async function editarRegistroPrompt(docId, statusAtual) {
   }
 }
 
-  // ─── PROFILE ──────────────────────────────────────────────────────────────
+  // ─── PERFIS ───────────────
   async function loadProfile() {
     if (!currentUser) return;
     const snap = await getDoc(doc(db, "usuarios", currentUser.uid));
@@ -1496,7 +1488,7 @@ async function editarRegistroPrompt(docId, statusAtual) {
       ${infoRow("Tipo", data.tipo)}`;
   }
 
-  // ─── ADMIN ────────────────────────────────────────────────────────────────
+  // ─── ADMIN ────────────────
   function bindAdminTabs() {
     document.querySelectorAll("[data-admin-tab]").forEach(btn => {
       btn.addEventListener("click", () => {
@@ -1510,7 +1502,6 @@ async function editarRegistroPrompt(docId, statusAtual) {
       const map = { caminhoes: "frota", carretas: "carreta", usuarios: "user" };
       openModal(map[currentAdminTab] || "frota");
     });
-    // Hide FAB on "sistema" tab
     document.querySelector('[data-admin-tab="sistema"]').addEventListener("click", () => {
       hide($("admin-fab"));
     });
@@ -1607,7 +1598,7 @@ async function editarRegistroPrompt(docId, statusAtual) {
     });
   }
 
-  // ─── MODAL ────────────────────────────────────────────────────────────────
+  // ─── MODAIS ─────────────────
   function openModal(type, docId = null) {
     console.log('openModal called with:', { type, docId });
     const overlay = $("modal-overlay");
@@ -1627,7 +1618,7 @@ async function editarRegistroPrompt(docId, statusAtual) {
       body.innerHTML = formUser();
     }
 
-    // Load existing data if editing
+    // Carrega os dados existentes se estiver editando
     if (isEdit) {
       const colMap = { frota: "caminhoes", carreta: "carretas", user: "usuarios" };
       getDoc(doc(db, colMap[type], docId)).then(snap => {
